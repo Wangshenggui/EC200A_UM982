@@ -5,15 +5,15 @@ import sys
 # 添加 /usr 目录到模块搜索路径
 sys.path.append('/usr')
 import um982
+import ble
 
 
-# 初始化 UART1
+# 初始化 um982
 uart_um982 = um982.init_um982()
+# 初始化 ble
+uart_ble = ble.init_ble()
 
 if __name__ == "__main__":
-
-    # 启动接收线程
-    _thread.start_new_thread(um982.receive_data, (uart_um982,))
     
     while True:
         utime.sleep_ms(500)
