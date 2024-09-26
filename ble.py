@@ -11,8 +11,6 @@ uart_ble = None
 
 ble_send_data_list = [
     "AT+QRST\r\n",
-    "AT+QRST\r\n",
-    "AT+QRST\r\n",
     "AT+QBLEINIT=2\r\n",
     "AT+QBLEADVPARAM=150,150\r\n",
     "AT+QBLEGATTSSRV=fff1\r\n",

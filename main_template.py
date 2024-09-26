@@ -17,7 +17,7 @@ if __name__ == "__main__":
     
     num = 0  # 初始化数字
     while True:
-        utime.sleep_ms(500)
+        utime.sleep_ms(3000)
         if ble.is_connected:
             print("设备处于连接状态，可以发送数据")
             s=str(num)
