@@ -17,11 +17,11 @@ if __name__ == "__main__":
     
     num = 0  # 初始化数字
     while True:
-        utime.sleep_ms(3000)
+        utime.sleep_ms(1000)
         if ble.is_connected:
-            print("设备处于连接状态，可以发送数据")
+            print("设备处于连接状态，可以发送数据\r\n")
             s=str(num)
             num+=1
             ble.ble_send_string(s + "," + s*2)
         else:
-            print("设备未连接，无法发送数据")
+            print("设备未连接，无法发送数据\r\n")

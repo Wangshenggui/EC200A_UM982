@@ -25,7 +25,7 @@ def init_ble():
     print("ble初始化\r\n")
     global uart_ble
     uart_ble = UART(UART.UART2, 115200, 8, 0, 1, 0)  # 串口初始化
-    _thread.start_new_thread(ble_receive_data, (uart_ble,))
+    uart_ble.set_callback(uart_call)  # 设置接收中断
     
     for data in ble_send_data_list:
         utime.sleep_ms(1000)
@@ -34,6 +34,20 @@ def init_ble():
     
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
 
+def uart_call(para):
+    global is_connected  # 使用全局变量
+    received = uart_ble.read()  # 读取所有可用数据
+    if received:
+        message = received.decode('utf-8')  # 解码接收到的数据
+        print("ble中断接收数据:", message)  # 打印接收到的数据
+        
+        # 判断连接状态
+        if "+QBLESTAT:CONNECTED" in message:
+            is_connected = True  # 设置连接标志位为True
+        
+        elif "+QBLESTAT:DISCONNECTED" in message:
+            is_connected = False  # 设置连接标志位为False
+        
 
 def string_to_hex(s):
     # 计算字符串的字符数
@@ -54,24 +68,4 @@ def ble_send_string(s):
     print(result)
     uart_ble.write(result)
 
-def ble_receive_data(uart):
-    global is_connected  # 使用全局变量
-    
-    while True:
-        if uart.any():  # 检查是否有数据可读
-            received = uart.read()  # 读取所有可用数据
-            if received:
-                message = received.decode('utf-8')  # 解码接收到的数据
-                print("ble接收数据:", message)  # 打印接收到的数据
-                
-                # 判断连接状态
-                if "+QBLESTAT:CONNECTED" in message:
-                    is_connected = True  # 设置连接标志位为True
-                    print("设备已连接")
-                
-                elif "+QBLESTAT:DISCONNECTED" in message:
-                    is_connected = False  # 设置连接标志位为False
-                    print("设备已断开连接")
-
-        utime.sleep_ms(10)  # 避免占用过多 CPU
         
