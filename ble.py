@@ -17,7 +17,7 @@ ble_send_data_list = [
     "AT+QBLEGATTSCHAR=fff2\r\n",
     "AT+QBLEGATTSCHAR=fff3\r\n",
     "AT+QBLEGATTSSRVDONE\r\n",
-    "AT+QBLENAME=AiNiMa\r\n",
+    # "AT+QBLENAME=UM982_RTK\r\n",
     "AT+QBLEADVSTART\r\n"
     ]
 
@@ -28,7 +28,7 @@ def init_ble():
     uart_ble.set_callback(uart_call)  # 设置接收中断
     
     for data in ble_send_data_list:
-        utime.sleep_ms(1000)
+        utime.sleep_ms(800)
         print(data)
         uart_ble.write(data)
     
@@ -44,7 +44,6 @@ def uart_call(para):
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
             is_connected = True  # 设置连接标志位为True
-        
         elif "+QBLESTAT:DISCONNECTED" in message:
             is_connected = False  # 设置连接标志位为False
         

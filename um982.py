@@ -36,7 +36,7 @@ def init_um982():
     uart_um982.set_callback(uart_call)  # 设置接收中断
     
     for data in um982_send_data_list:
-        utime.sleep_ms(100)
+        utime.sleep_ms(10)
         print(data)
         uart_um982.write(data)
     
