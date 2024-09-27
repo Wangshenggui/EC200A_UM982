@@ -36,8 +36,8 @@ def init_um982():
 
 def uart_call(para):
     received = uart_um982.read()  # 读取所有可用数据
-    # if received:
-    #     print("um982中断接收数据:", received.decode('utf-8'))  # 解码并打印接收到的数据
+    if received:
+        print("um982中断接收数据:", received.decode('utf-8'))  # 解码并打印接收到的数据
 
         
 
