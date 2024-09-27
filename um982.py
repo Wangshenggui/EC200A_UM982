@@ -2,9 +2,14 @@ from machine import UART
 import utime
 import _thread
 
+import sys
+sys.path.append('/usr')
+import rtcmsocket
+
 
 uart_um982 = None
 um982_read_data = None
+global_gga_data = None
 
 um982_send_data_list = [
     # "freset\r\n",
@@ -38,11 +43,20 @@ def init_um982():
     return uart_um982  # 返回 UART 实例，以便在其他地方使用
 
 def uart_call(para):
+    global global_gga_data
     global um982_read_data
     received = uart_um982.read()  # 读取所有可用数据
     if received:
         um982_read_data = received.decode('utf-8')
         print(um982_read_data)  # 解码并打印接收到的数据
+        
+        # 分离数据
+        nmea_lines = um982_read_data.strip().split('\n')
+        for line in nmea_lines:
+            if line.startswith('$GNGGA'):  # 只处理 GGA 数据
+                global_gga_data = line
+                rtcmsocket.rtcm_sock.send(global_gga_data + "\r\n")
+        
 
         
 
