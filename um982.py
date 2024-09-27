@@ -55,7 +55,11 @@ def uart_call(para):
         for line in nmea_lines:
             if line.startswith('$GNGGA'):  # 只处理 GGA 数据
                 global_gga_data = line
-                rtcmsocket.rtcm_sock.send(global_gga_data + "\r\n")
+                if rtcmsocket.is_connected: # 判断TCP是否连接
+                    print("发送GGA到服务器")
+                    rtcmsocket.rtcm_sock.send(global_gga_data + "\r\n")
+                else:
+                    print("未连接RTCM服务器")
         
 
         

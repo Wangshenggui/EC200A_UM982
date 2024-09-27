@@ -7,6 +7,8 @@ sys.path.append('/usr')
 import um982
 
 rtcm_sock = None
+# 定义全局标志位
+is_connected = False  # 初始状态为未连接
 
 def rtcm_tcp_client(address,port):
     global rtcm_sock
@@ -32,13 +34,23 @@ def rtcm_tcp_client(address,port):
 
 
 def rtcm_tcp_read(socket):
+    global is_connected
     while True:
         try:
             data = socket.recv(3276)
             if data:
                 utf8_data = data.decode('utf-8')
-                print(utf8_data)
-                um982.uart_um982.write(data)
+                
+                # 判断是否包含 "ICY 200 OK\r\n"
+                if "ICY 200 OK\r\n" in utf8_data:
+                    is_connected = True
+                    print(utf8_data)
+                elif "ERROR - Bad Password\r\n" in utf8_data:
+                    is_connected = False
+                    print("账号密码错误\r\n")
+                else:
+                    um982.uart_um982.write(data)
+                    print("收到差分数据\r\n")
         except:
             print("断开TCP连接\r\n")
             socket.close()

@@ -12,10 +12,11 @@ import rtcmsocket
 
 # 初始化 um982
 uart_um982 = um982.init_um982()
-# 初始化 ble
-uart_ble = ble.init_ble()
 # 初始化rtcm_socket
 socket_rtcm = rtcmsocket.rtcm_tcp_client("120.253.226.97",8002)
+# 初始化 ble
+uart_ble = ble.init_ble()
+
 
 if __name__ == "__main__":
     
