@@ -39,7 +39,7 @@ def uart_call(para):
     received = uart_ble.read()  # 读取所有可用数据
     if received:
         message = received.decode('utf-8')  # 解码接收到的数据
-        print("ble中断接收数据:", message)  # 打印接收到的数据
+        # print("ble中断接收数据:", message)  # 打印接收到的数据
         
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
