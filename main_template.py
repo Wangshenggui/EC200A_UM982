@@ -31,17 +31,17 @@ if __name__ == "__main__":
 
     while True:
         utime.sleep_ms(1000)
-        if ble.is_connected:
-            if rtcmsocket.is_connected == 0:
-                rtcm_s = "No SIM card\r\n"
-            elif rtcmsocket.is_connected == 1:
-                rtcm_s = "Connected network\r\n"
-            elif rtcmsocket.is_connected == 2:
-                rtcm_s = ""
-            elif rtcmsocket.is_connected == 3:
-                rtcm_s = "Account password error\r\n"
-            ble.ble_send_string(rtcm_s)
-        else:
-            printf("BLE未连接\r\n")
-            
+        
+        if rtcmsocket.is_connected == 0:
+            rtcm_s = "No SIM card\r\n"
+        elif rtcmsocket.is_connected == 1:
+            rtcm_s = "Connected network\r\n"
+        elif rtcmsocket.is_connected == 2:
+            rtcm_s = ""
+        elif rtcmsocket.is_connected == 3:
+            rtcm_s = "Account password error\r\n"
+        ble.ble_send_string(rtcm_s)
+        
+        if ble.BLE_SYS_Command == 1:
+            ble.ble_send_string(um982.um982_read_data)
         # Power.powerRestart()

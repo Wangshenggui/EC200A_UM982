@@ -8,6 +8,7 @@ is_connected = False  # 初始状态为未连接
 
 
 uart_ble = None
+BLE_SYS_Command = 0
 
 
 def printf(s):
@@ -43,6 +44,7 @@ def init_ble():
 
 def uart_call(para):
     global is_connected  # 使用全局变量
+    global BLE_SYS_Command
     received = uart_ble.read()  # 读取所有可用数据
     if received:
         message = received.decode('utf-8')  # 解码接收到的数据
@@ -51,6 +53,9 @@ def uart_call(para):
             is_connected = True  # 设置连接标志位为True
         elif "+QBLESTAT:DISCONNECTED" in message:
             is_connected = False  # 设置连接标志位为False
+        
+        if "AT+GetGNSS\r\n" in message:
+            BLE_SYS_Command = 1 # 读取GNSS指令
         
 
 def string_to_hex(s):
