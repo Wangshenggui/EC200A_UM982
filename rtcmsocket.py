@@ -41,36 +41,43 @@ def rtcm_tcp_client(address,port):
     # 发送握手消息
     rtcm_sock.send(request)
     
-    _thread.start_new_thread(rtcm_tcp_read, (rtcm_sock,))
+    _thread.start_new_thread(RTCM_TCP_thread, (rtcm_sock,))
     
     utime.sleep_ms(500)
     
     return rtcm_sock
 
 
-def rtcm_tcp_read(socket):
-    global is_connected
+def RTCM_TCP_thread(para):
+    t = 0
     while True:
-        try:
-            data = socket.recv(3276)
-            if data:
-                utf8_data = data.decode('utf-8')
-                
-                # 判断是否包含 "ICY 200 OK\r\n"
-                if "ICY 200 OK\r\n" in utf8_data:
-                    is_connected = 2
-                    printf(utf8_data)
-                elif "ERROR - Bad Password\r\n" in utf8_data:
-                    is_connected = 3
-                    printf("账号密码错误\r\n")
-                else:
-                    um982.uart_um982.write(data)
-                    printf("收到差分数据\r\n")
-        except:
-            printf("断开TCP连接\r\n")
-            socket.close()
-            break
+        t+=1
+        if t == 100:
+            t = 0
+            printf("RTCM_TCP线程...")
         
-    utime.sleep_ms(10)  # 避免占用过多 CPU
+        rtcm_tcp_read(para)
+        
+        utime.sleep_ms(10)  # 避免占用过多 CPU
     
+def rtcm_tcp_read(para):
+    global is_connected
+    try:
+        data = para.recv(3276)
+        if data:
+            utf8_data = data.decode('utf-8')
+            
+            # 判断是否包含 "ICY 200 OK\r\n"
+            if "ICY 200 OK\r\n" in utf8_data:
+                is_connected = 2
+                printf(utf8_data)
+            elif "ERROR - Bad Password\r\n" in utf8_data:
+                is_connected = 3
+                printf("账号密码错误\r\n")
+            else:
+                um982.uart_um982.write(data)
+                printf("收到差分数据\r\n")
+    except:
+        printf("断开TCP连接\r\n")
+        para.close()
 

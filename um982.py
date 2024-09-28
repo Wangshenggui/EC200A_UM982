@@ -40,8 +40,17 @@ def init_um982():
         utime.sleep_ms(10)
         printf(data)
         uart_um982.write(data)
+        
+    # 开启蓝牙线程
+    _thread.start_new_thread(UM982_thread, (uart_um982,))
     
     return uart_um982  # 返回 UART 实例，以便在其他地方使用
+
+# UM982线程
+def UM982_thread(para):
+    while True:
+        utime.sleep_ms(1000)
+        printf("UM982线程...")
 
 def uart_call(para):
     global global_gga_data

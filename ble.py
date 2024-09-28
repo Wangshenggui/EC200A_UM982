@@ -40,7 +40,17 @@ def init_ble():
     printf("ble完成初始化\r\n")
     ble_send_string("BLE初始化完成\r\n")
     
+    # 开启蓝牙线程
+    _thread.start_new_thread(BLE_thread, (uart_ble,))
+    
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
+
+# 蓝牙线程
+def BLE_thread(para):
+    while True:
+        utime.sleep_ms(1000)
+        printf("蓝牙线程...")
+        
 
 def uart_call(para):
     global is_connected  # 使用全局变量
