@@ -9,6 +9,10 @@ is_connected = False  # 初始状态为未连接
 
 uart_ble = None
 
+
+def printf(s):
+    print("[ble]: " + s)
+
 ble_send_data_list = [
     "AT+QRST\r\n",
     "AT+QBLEINIT=2\r\n",
@@ -22,17 +26,17 @@ ble_send_data_list = [
     ]
 
 def init_ble():
-    print("ble初始化\r\n")
+    printf("ble初始化\r\n")
     global uart_ble
     uart_ble = UART(UART.UART2, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_ble.set_callback(uart_call)  # 设置接收中断
     
     for data in ble_send_data_list:
         utime.sleep_ms(800)
-        print(data)
+        printf(data)
         uart_ble.write(data)
     
-    print("ble完成初始化\r\n")
+    printf("ble完成初始化\r\n")
     ble_send_string("BLE初始化完成\r\n")
     
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
@@ -42,8 +46,6 @@ def uart_call(para):
     received = uart_ble.read()  # 读取所有可用数据
     if received:
         message = received.decode('utf-8')  # 解码接收到的数据
-        print("ble中断接收数据:", message)  # 打印接收到的数据
-        
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
             is_connected = True  # 设置连接标志位为True
@@ -66,8 +68,9 @@ def string_to_hex(s):
     return result
 
 def ble_send_string(s):
+    if not s:
+        return
     result = string_to_hex(s)
-    print(result)
     uart_ble.write(result)
 
         

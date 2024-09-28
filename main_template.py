@@ -18,6 +18,8 @@ uart_um982 = um982.init_um982()
 # 初始化rtcm_socket
 socket_rtcm = rtcmsocket.rtcm_tcp_client("120.253.226.97",8002)
 
+def printf(s):
+    print("[main_template]: " + s)
 
 if __name__ == "__main__":
     
@@ -35,11 +37,11 @@ if __name__ == "__main__":
             elif rtcmsocket.is_connected == 1:
                 rtcm_s = "Connected network\r\n"
             elif rtcmsocket.is_connected == 2:
-                rtcm_s = "You have connected to the RTCM server\r\n"
+                rtcm_s = ""
             elif rtcmsocket.is_connected == 3:
                 rtcm_s = "Account password error\r\n"
             ble.ble_send_string(rtcm_s)
         else:
-            print("设备未连接，无法发送数据\r\n")
+            printf("BLE未连接\r\n")
             
         # Power.powerRestart()

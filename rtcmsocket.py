@@ -14,6 +14,9 @@ rtcm_sock = None
 # 3   账号密码错误
 is_connected = 0
 
+def printf(s):
+    print("[rtcmsocket]: " + s)
+
 def rtcm_tcp_client(address,port):
     global rtcm_sock
     global is_connected
@@ -22,7 +25,7 @@ def rtcm_tcp_client(address,port):
     try:
         rtcm_sock.connect((address, port))
     except OSError as e:
-        print("连接失败:", e)
+        printf("连接失败:", e)
         is_connected = 0
         return
     is_connected = 1
@@ -32,7 +35,7 @@ def rtcm_tcp_client(address,port):
     "User-Agent: NTRIP GNSSInternetRadio/1.4.10\r\n"\
     "Accept: */*\r\n"\
     "Connection: close\r\n"\
-    "Authorization: Basic " + "Y2VkcjEzOTIwOmZ5eDYyNzM" + "\r\n"\
+    "Authorization: Basic " + "Y2VkcjEzOTIwOmZ5eDYyNzMz" + "\r\n"\
     "\r\n"
     
     # 发送握手消息
@@ -56,15 +59,15 @@ def rtcm_tcp_read(socket):
                 # 判断是否包含 "ICY 200 OK\r\n"
                 if "ICY 200 OK\r\n" in utf8_data:
                     is_connected = 2
-                    print(utf8_data)
+                    printf(utf8_data)
                 elif "ERROR - Bad Password\r\n" in utf8_data:
                     is_connected = 3
-                    print("账号密码错误\r\n")
+                    printf("账号密码错误\r\n")
                 else:
                     um982.uart_um982.write(data)
-                    print("收到差分数据\r\n")
+                    printf("收到差分数据\r\n")
         except:
-            print("断开TCP连接\r\n")
+            printf("断开TCP连接\r\n")
             socket.close()
             break
         
