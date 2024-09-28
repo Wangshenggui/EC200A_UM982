@@ -19,15 +19,15 @@ def printf(s):
     print("[ble]: " + s)
 
 ble_send_data_list = [
-    "AT+QRST\r\n",
-    "AT+QBLEINIT=2\r\n",
-    "AT+QBLEADVPARAM=150,150\r\n",
-    "AT+QBLEGATTSSRV=fff1\r\n",
-    "AT+QBLEGATTSCHAR=fff2\r\n",
-    "AT+QBLEGATTSCHAR=fff3\r\n",
-    "AT+QBLEGATTSSRVDONE\r\n",
+    "AT+QRST\r\n",  #复位
+    "AT+QBLEINIT=2\r\n",    #模块为外围设备进行 BLE 初始化
+    "AT+QBLEADVPARAM=150,150\r\n",  #设置 BLE 广播参数
+    "AT+QBLEGATTSSRV=fff1\r\n", #创建 BLE 服务并设置服务 UUID 为 fff1
+    "AT+QBLEGATTSCHAR=fff2\r\n",    #设置 GATT 特征值 UUID 为 fff2
+    "AT+QBLEGATTSCHAR=fff3\r\n",    #设置 GATT 特征值 UUID 为 fff3
+    "AT+QBLEGATTSSRVDONE\r\n",  #服务添加完成
     # "AT+QBLENAME=UM982_RTK\r\n",
-    "AT+QBLEADVSTART\r\n"
+    "AT+QBLEADVSTART\r\n",   #开启 BLE 广播
     ]
 
 def init_ble():
@@ -68,6 +68,15 @@ def BLE_thread(para):
         if "AT+GetGNSS\r\n" in message:
             BLE_SYS_Command = 1 # 读取GNSS指令
             printf(message)
+            
+        if "AT+Name=" in message:
+            # 提取名称部分
+            start_index = message.index('=') + 1
+            end_index = message.index('\r\n', start_index)
+            name = message[start_index:end_index]
+            print("Extracted name: " + name)
+            uart_ble.write("AT+QBLENAME=" + name + "\r\n")
+            
             
         
         
