@@ -15,6 +15,7 @@ import rtcmsocket
 uart_ble = ble.init_ble()
 # 初始化 um982
 uart_um982 = um982.init_um982()
+utime.sleep_ms(1100)
 # 初始化rtcm_socket
 socket_rtcm = rtcmsocket.rtcm_tcp_client("120.253.226.97",8002)
 
@@ -44,4 +45,6 @@ if __name__ == "__main__":
         
         if ble.BLE_SYS_Command == 1:
             ble.ble_send_string(um982.um982_read_data)
+            
+        printf("主线程")
         # Power.powerRestart()

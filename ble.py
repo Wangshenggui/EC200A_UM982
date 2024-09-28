@@ -56,6 +56,8 @@ def BLE_thread(para):
     global BLE_SYS_Command
     while True:
         ble_read_semphore.acquire()
+        printf("信号量")
+        
         message = received.decode('utf-8')  # 解码接收到的数据
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
@@ -65,6 +67,9 @@ def BLE_thread(para):
         
         if "AT+GetGNSS\r\n" in message:
             BLE_SYS_Command = 1 # 读取GNSS指令
+            printf(message)
+            
+        
         
 
 def uart_call(para):
