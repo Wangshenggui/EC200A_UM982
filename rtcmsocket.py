@@ -7,20 +7,32 @@ sys.path.append('/usr')
 import um982
 
 rtcm_sock = None
-# 定义全局标志位
-is_connected = False  # 初始状态为未连接
+# 定义全局标志位\
+# 0   未连接网络
+# 1   已连接网络
+# 2   已连接RTCM服务器
+# 3   账号密码错误
+is_connected = 0
 
 def rtcm_tcp_client(address,port):
     global rtcm_sock
+    global is_connected
     rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM, usocket.IPPROTO_TCP)   #创建一个 socket 对象
-    rtcm_sock.connect((address, port))  #连接到指定的 TCP 服务器
+    # rtcm_sock.connect((address, port))  #连接到指定的 TCP 服务器
+    try:
+        rtcm_sock.connect((address, port))
+    except OSError as e:
+        print("连接失败:", e)
+        is_connected = 0
+        return
+    is_connected = 1
     
     request = \
     "GET /"+ "RTCM33_GRCEJ" +" HTTP/1.0\r\n"\
     "User-Agent: NTRIP GNSSInternetRadio/1.4.10\r\n"\
     "Accept: */*\r\n"\
     "Connection: close\r\n"\
-    "Authorization: Basic " + "Y2VkcjEzOTIwOmZ5eDYyNzMz" + "\r\n"\
+    "Authorization: Basic " + "Y2VkcjEzOTIwOmZ5eDYyNzM" + "\r\n"\
     "\r\n"
     
     # 发送握手消息
@@ -43,10 +55,10 @@ def rtcm_tcp_read(socket):
                 
                 # 判断是否包含 "ICY 200 OK\r\n"
                 if "ICY 200 OK\r\n" in utf8_data:
-                    is_connected = True
+                    is_connected = 2
                     print(utf8_data)
                 elif "ERROR - Bad Password\r\n" in utf8_data:
-                    is_connected = False
+                    is_connected = 3
                     print("账号密码错误\r\n")
                 else:
                     um982.uart_um982.write(data)

@@ -32,6 +32,9 @@ def init_ble():
         print(data)
         uart_ble.write(data)
     
+    print("ble完成初始化\r\n")
+    ble_send_string("BLE初始化完成\r\n")
+    
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
 
 def uart_call(para):
@@ -39,7 +42,7 @@ def uart_call(para):
     received = uart_ble.read()  # 读取所有可用数据
     if received:
         message = received.decode('utf-8')  # 解码接收到的数据
-        # print("ble中断接收数据:", message)  # 打印接收到的数据
+        print("ble中断接收数据:", message)  # 打印接收到的数据
         
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
