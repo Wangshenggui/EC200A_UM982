@@ -9,6 +9,10 @@ is_connected = False  # 初始状态为未连接
 
 uart_ble = None
 BLE_SYS_Command = 0
+received = ""
+
+# 创建信号量
+ble_read_semphore = _thread.allocate_semphore(1)
 
 
 def printf(s):
@@ -29,6 +33,9 @@ ble_send_data_list = [
 def init_ble():
     printf("ble初始化\r\n")
     global uart_ble
+    
+    # 开启蓝牙线程
+    _thread.start_new_thread(BLE_thread, (uart_ble,))
     uart_ble = UART(UART.UART2, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_ble.set_callback(uart_call)  # 设置接收中断
     
@@ -40,23 +47,15 @@ def init_ble():
     printf("ble完成初始化\r\n")
     ble_send_string("BLE初始化完成\r\n")
     
-    # 开启蓝牙线程
-    _thread.start_new_thread(BLE_thread, (uart_ble,))
-    
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
 
 # 蓝牙线程
 def BLE_thread(para):
-    while True:
-        utime.sleep_ms(1000)
-        printf("蓝牙线程...")
-        
-
-def uart_call(para):
+    global received
     global is_connected  # 使用全局变量
     global BLE_SYS_Command
-    received = uart_ble.read()  # 读取所有可用数据
-    if received:
+    while True:
+        ble_read_semphore.acquire()
         message = received.decode('utf-8')  # 解码接收到的数据
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
@@ -66,6 +65,14 @@ def uart_call(para):
         
         if "AT+GetGNSS\r\n" in message:
             BLE_SYS_Command = 1 # 读取GNSS指令
+        
+
+def uart_call(para):
+    global received
+    received = uart_ble.read()  # 读取所有可用数据
+    if received:
+        ble_read_semphore.release()  # 释放信号量
+        
         
 
 def string_to_hex(s):
