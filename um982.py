@@ -9,28 +9,26 @@ import rtcmsocket
 
 uart_um982 = None
 um982_read_data = None
-global_gga_data = None
+global_gga_data = ""
 
 received = ""
 
 # 创建信号量
 um982_read_semphore = _thread.allocate_semphore(1)
 
-um982_send_data_list = [
-    # "freset\r\n",
-    "GPGGA COM1 1\r\n",
-    "GPGGA COM2 1\r\n",
-    "GPRMC COM1 1\r\n",
-    "GPRMC COM2 1\r\n",
-    "GPTHS COM1 1\r\n",
-    "GPTHS COM2 1\r\n",
-    "unmask BDS\r\n",
-    "unmask GLO\r\n",
-    "unmask GPS\r\n",
-    "unmask GAL\r\n",
-    "CONFIG ANTENNA2 ENABLE\r\n",
+um982_send_data_list = \
+"GPGGA COM1 1\r\n\
+GPGGA COM2 1\r\n\
+GPRMC COM1 1\r\n\
+GPRMC COM2 1\r\n\
+GPTHS COM1 1\r\n\
+GPTHS COM2 1\r\n\
+unmask BDS\r\n\
+unmask GLO\r\n\
+unmask GPS\r\n\
+unmask GAL\r\n\
+CONFIG ANTENNA2 ENABLE\r\n"
     # "saveconfig\r\n"
-    ]
 
 # 从天线使能
 # CONFIG ANTENNA2 ENABLE
@@ -119,11 +117,14 @@ def init_um982():
     uart_um982 = UART(UART.UART1, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_um982.set_callback(uart_call)  # 设置接收中断
     
-    for data in um982_send_data_list:
-        utime.sleep_ms(10)
-        printf(data)
-        uart_um982.write(data)
-        
+    # for data in um982_send_data_list:
+    #     utime.sleep_ms(10)
+    #     printf(data)
+    #     uart_um982.write(data)
+    
+    # 发送两次，有时候发送第一个字节会失败，导致出现错误
+    uart_um982.write(um982_send_data_list)
+    uart_um982.write(um982_send_data_list)
     
     
     return uart_um982  # 返回 UART 实例，以便在其他地方使用

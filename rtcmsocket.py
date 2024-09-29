@@ -19,6 +19,9 @@ def rtcm_tcp_client(address, port):
 
     rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
     
+    # 设置超时为3秒
+    rtcm_sock.settimeout(3)
+    
     try:
         rtcm_sock.connect((address, port))
     except OSError as e:
@@ -83,7 +86,9 @@ def rtcm_tcp_read():
             else:
                 um982.uart_um982.write(data)
                 printf("收到差分数据\r\n")
-
+    except OSError as e:
+        printf("接收数据超时或断开TCP连接: " + str(e))
+        return  # 跳出函数
     except Exception as e:
         printf("断开TCP连接: " + str(e))
         rtcm_sock.close()
