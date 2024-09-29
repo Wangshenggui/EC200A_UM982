@@ -5,6 +5,7 @@ import _thread
 import sys
 sys.path.append('/usr')
 import rtcmsocket
+import fs
 
 
 uart_um982 = None
@@ -16,18 +17,18 @@ received = ""
 # 创建信号量
 um982_read_semphore = _thread.allocate_semphore(1)
 
-um982_send_data_list = \
-"GPGGA COM1 1\r\n\
-GPGGA COM2 1\r\n\
-GPRMC COM1 1\r\n\
-GPRMC COM2 1\r\n\
-GPTHS COM1 1\r\n\
-GPTHS COM2 1\r\n\
-unmask BDS\r\n\
-unmask GLO\r\n\
-unmask GPS\r\n\
-unmask GAL\r\n\
-CONFIG ANTENNA2 ENABLE\r\n"
+# um982_send_data_list = \
+# "GPGGA COM1 1\r\n\
+# GPGGA COM2 1\r\n\
+# GPRMC COM1 1\r\n\
+# GPRMC COM2 1\r\n\
+# GPTHS COM1 1\r\n\
+# GPTHS COM2 1\r\n\
+# unmask BDS\r\n\
+# unmask GLO\r\n\
+# unmask GPS\r\n\
+# unmask GAL\r\n\
+# CONFIG ANTENNA2 ENABLE\r\n"
     # "saveconfig\r\n"
 
 # 从天线使能
@@ -122,9 +123,25 @@ def init_um982():
     #     printf(data)
     #     uart_um982.write(data)
     
+    if fs.CreateFile("um982.txt") == True:
+        FileContent = fs.ReadFile("um982.txt")
+    else:
+        fs.WriteFile("um982.txt","GPGGA COM1 1\r\n\
+GPGGA COM2 1\r\n\
+GPRMC COM1 1\r\n\
+GPRMC COM2 1\r\n\
+GPTHS COM1 1\r\n\
+GPTHS COM2 1\r\n\
+unmask BDS\r\n\
+unmask GLO\r\n\
+unmask GPS\r\n\
+unmask GAL\r\n\
+CONFIG ANTENNA2 ENABLE\r\n")
+        FileContent = fs.ReadFile("um982.txt")
+    
     # 发送两次，有时候发送第一个字节会失败，导致出现错误
-    uart_um982.write(um982_send_data_list)
-    uart_um982.write(um982_send_data_list)
+    uart_um982.write(FileContent)
+    uart_um982.write(FileContent)
     
     
     return uart_um982  # 返回 UART 实例，以便在其他地方使用

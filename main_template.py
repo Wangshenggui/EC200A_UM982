@@ -11,7 +11,7 @@ import fs
 import rtcmsocket
 import bleat
 
-fs.fs_test()
+
 # 初始化AT
 bleat.init_at()
 # 初始化 ble

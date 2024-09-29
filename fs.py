@@ -36,11 +36,13 @@ def CreateFile(FileName):
     try:
         with open(full_path, "r"):  # 尝试以只读模式打开文件
             printf("文件已存在: {}".format(full_path))
+            return True  # 文件已存在
     except Exception:
         # 文件不存在，创建新文件
         printf("创建新文件: {}".format(full_path))
         with open(full_path, "w") as f:
             pass  # 创建空文件并自动关闭
+        return False  # 文件已创建
 
 def WriteFile(FileName, s):
     full_path = "/usr/" + FileName
@@ -58,8 +60,10 @@ def ReadFile(FileName):
         with open(full_path, "r") as f:  # 以只读模式打开文件
             content = f.read()  # 读取文件内容
         printf("文件内容:\n{}".format(content))  # 打印内容
+        return content  # 返回读取内容
     except Exception as e:
         printf("读取文件时出错: {}".format(e))  # 捕获并打印异常信息
+        return None
 
         
         
