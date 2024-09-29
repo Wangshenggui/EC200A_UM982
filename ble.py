@@ -14,6 +14,7 @@ is_connected = False  # 初始状态为未连接
 uart_ble = None
 BLE_SYS_Command = 0
 received = ""
+at_message = ""
 
 # 创建信号量
 ble_read_semphore = _thread.allocate_semphore(1)
@@ -57,8 +58,7 @@ def init_ble():
 def BLE_thread(para):
     global received
     global is_connected  # 使用全局变量
-    global BLE_SYS_Command
-    
+    global at_message
     while True:
         ble_read_semphore.acquire()
         printf("信号量")
@@ -71,6 +71,7 @@ def BLE_thread(para):
             is_connected = False  # 设置连接标志位为False
         
         if message.startswith("AT") and message.endswith("\r\n"):
+            at_message = message
             bleat.at_semaphore.release()  # 释放AT指令信号量
 
             

@@ -12,15 +12,16 @@ import rtcmsocket
 import bleat
 
 
-# 初始化AT
-bleat.init_at()
+
 # 初始化 ble
 uart_ble = ble.init_ble()
 # 初始化 um982
 uart_um982 = um982.init_um982()
 utime.sleep_ms(1100)
 # 初始化rtcm_socket
-socket_rtcm = rtcmsocket.rtcm_tcp_client("120.253.226.97",8002)
+socket_rtcm = rtcmsocket.rtcm_tcp_client()
+# 初始化AT
+bleat.init_at()
 
 
 def printf(s):

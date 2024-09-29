@@ -27,5 +27,6 @@ def AT_thread():
     while True:
         # 获取信号量
         at_semaphore.acquire()
-        printf("AT线程")
+        if "AT\r\n" in ble.at_message:
+            ble.ble_send_string("OK\r\n")
     
