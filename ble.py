@@ -2,6 +2,10 @@ from machine import UART
 import utime
 import _thread
 
+import sys
+# 添加 /usr 目录到模块搜索路径
+sys.path.append('/usr')
+import bleat
 
 # 定义全局标志位
 is_connected = False  # 初始状态为未连接
@@ -54,6 +58,7 @@ def BLE_thread(para):
     global received
     global is_connected  # 使用全局变量
     global BLE_SYS_Command
+    
     while True:
         ble_read_semphore.acquire()
         printf("信号量")
@@ -65,17 +70,9 @@ def BLE_thread(para):
         elif "+QBLESTAT:DISCONNECTED" in message:
             is_connected = False  # 设置连接标志位为False
         
-        if "AT+GetGNSS\r\n" in message:
-            BLE_SYS_Command = 1 # 读取GNSS指令
-            printf(message)
-            
-        if "AT+Name=" in message:
-            # 提取名称部分
-            start_index = message.index('=') + 1
-            end_index = message.index('\r\n', start_index)
-            name = message[start_index:end_index]
-            print("Extracted name: " + name)
-            uart_ble.write("AT+QBLENAME=" + name + "\r\n")
+        if message.startswith("AT") and message.endswith("\r\n"):
+            bleat.at_semaphore.release()  # 释放AT指令信号量
+
             
             
         
