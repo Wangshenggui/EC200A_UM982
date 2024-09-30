@@ -35,6 +35,7 @@ if __name__ == "__main__":
     # fs.ReadFile("um982.ini")
     # fs.ReadFile("ble.ini")
 
+    ble.ble_send_string("System initialization is complete!")
     while True:
         utime.sleep_ms(1000)
         

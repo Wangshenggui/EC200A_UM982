@@ -41,10 +41,8 @@ def AT_thread():
             name = ble.at_message[start_index:end_index]
             printf("Extracted name: " + name)
             ble.uart_ble.write("AT+QBLENAME=" + name + "\r\n")
-        elif "AT+JSON=" in ble.at_message:
-            data = {'name': 'NiMa', 'age': 30}
-            json_str = ujson.dumps(data)
-            ble.ble_send_string(json_str)
+            utime.sleep_ms(500)
+            ble.ble_send_string("OK\r\n")
         elif "AT+{" in ble.at_message:
             try:
                 # 提取JSON部分
@@ -59,6 +57,7 @@ def AT_thread():
                     FileContent = fs.ReadFile("cors.txt")
                     printf(FileContent)
                     printf("系统即将重启...")
+                    ble.ble_send_string("系统即将重启...")
                     # 重启系统
                     Power.powerRestart()
             except (ValueError, KeyError) as e:
