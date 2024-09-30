@@ -1,12 +1,15 @@
 import utime
 import _thread
 import ujson
+from misc import Power
 
 import sys
 # 添加 /usr 目录到模块搜索路径
 sys.path.append('/usr')
 import um982
 import ble
+import fs
+import rtcmsocket
 
 
 # 创建信号量
@@ -36,7 +39,7 @@ def AT_thread():
             start_index = ble.at_message.index('=') + 1
             end_index = ble.at_message.index('\r\n', start_index)
             name = ble.at_message[start_index:end_index]
-            print("Extracted name: " + name)
+            printf("Extracted name: " + name)
             ble.uart_ble.write("AT+QBLENAME=" + name + "\r\n")
         elif "AT+JSON=" in ble.at_message:
             data = {'name': 'NiMa', 'age': 30}
@@ -51,9 +54,15 @@ def AT_thread():
                 
                 # 检查键是否存在
                 if "ip" in data and "port" in data and "mount" in data and "accpas" in data:
-                    ble.ble_send_string(data["name"] + str(data["age"]))
+                    # 写入JSON内容到文件
+                    fs.WriteFile("cors.txt", json_part)
+                    FileContent = fs.ReadFile("cors.txt")
+                    printf(FileContent)
+                    printf("系统即将重启...")
+                    # 重启系统
+                    Power.powerRestart()
             except (ValueError, KeyError) as e:
-                print("解析JSON时发生错误:", e)
+                printf("解析JSON时发生错误:", e)
         
         
             
