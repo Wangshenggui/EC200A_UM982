@@ -13,7 +13,6 @@ is_connected = False  # 初始状态为未连接
 
 
 uart_ble = None
-BLE_SYS_Command = 0
 received = ""
 at_message = ""
 

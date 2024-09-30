@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     ble.ble_send_string("System initialization is complete!")
     while True:
-        utime.sleep_ms(1000)
+        utime.sleep_ms(500)
         
         if rtcmsocket.is_connected == 0:
             rtcm_s = "No SIM card\r\n"
@@ -49,8 +49,9 @@ if __name__ == "__main__":
             rtcm_s = "Account password error\r\n"
         ble.ble_send_string(rtcm_s)
         
-        if ble.BLE_SYS_Command == 1:
-            ble.ble_send_string(um982.um982_read_data)
+        utime.sleep_ms(500)
+        
+        ble.ble_send_string(um982.um982_read_data)
             
         printf("主线程")
         # Power.powerRestart()
