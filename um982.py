@@ -123,25 +123,25 @@ def init_um982():
     #     printf(data)
     #     uart_um982.write(data)
     
-    if fs.CreateFile("um982.txt") == True:
-        FileContent = fs.ReadFile("um982.txt")
-    else:
-        fs.WriteFile("um982.txt","GPGGA COM1 1\r\n\
-GPGGA COM2 1\r\n\
-GPRMC COM1 1\r\n\
-GPRMC COM2 1\r\n\
-GPTHS COM1 1\r\n\
-GPTHS COM2 1\r\n\
-unmask BDS\r\n\
-unmask GLO\r\n\
-unmask GPS\r\n\
-unmask GAL\r\n\
-CONFIG ANTENNA2 ENABLE\r\n")
-        FileContent = fs.ReadFile("um982.txt")
+#     if fs.CreateFile("um982.txt") == True:
+#         FileContent = fs.ReadFile("um982.txt")
+#     else:
+#         fs.WriteFile("um982.txt","GPGGA COM1 1\r\n\
+# GPGGA COM2 1\r\n\
+# GPRMC COM1 1\r\n\
+# GPRMC COM2 1\r\n\
+# GPTHS COM1 1\r\n\
+# GPTHS COM2 1\r\n\
+# unmask BDS\r\n\
+# unmask GLO\r\n\
+# unmask GPS\r\n\
+# unmask GAL\r\n\
+# CONFIG ANTENNA2 ENABLE\r\n")
+#         FileContent = fs.ReadFile("um982.txt")
     
-    # 发送两次，有时候发送第一个字节会失败，导致出现错误
-    uart_um982.write(FileContent)
-    uart_um982.write(FileContent)
+#     # 发送两次，有时候发送第一个字节会失败，导致出现错误
+#     uart_um982.write(FileContent)
+#     uart_um982.write(FileContent)
     
     
     return uart_um982  # 返回 UART 实例，以便在其他地方使用
@@ -152,14 +152,15 @@ def UM982_thread(para):
     global um982_read_data
     while True:
         um982_read_semphore.acquire()
-        printf("信号量")
         
         um982_read_data = received.decode('utf-8')
+        
         # 分离数据
         nmea_lines = um982_read_data.strip().split('\n')
         for line in nmea_lines:
-            if line.startswith('$GNGGA'):  # 只处理 GGA 数据
+            if line.startswith('$GNGGA,'):  # 只处理 GGA 数据
                 global_gga_data = line
+                printf(line)
 
 def uart_call(para):
     global received
