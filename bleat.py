@@ -62,6 +62,14 @@ def AT_thread():
                     Power.powerRestart()
             except (ValueError, KeyError) as e:
                 printf("解析JSON时发生错误:", e)
+        elif "AT+UM982=" in ble.at_message:
+            # 提取指令部分
+            start_index = ble.at_message.index('=') + 1
+            end_index = ble.at_message.index('\r\n', start_index)
+            instruct = ble.at_message[start_index:end_index]
+            um982.uart_um982.write(instruct + "\r\n")
+            utime.sleep_ms(500)
+            ble.ble_send_string("OK\r\n")
         
         
             

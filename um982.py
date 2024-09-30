@@ -150,6 +150,9 @@ def init_um982():
 def UM982_thread(para):
     global global_gga_data
     global um982_read_data
+    # 串口发送第一个字节会有问题，直接发两次，默认开启GGA
+    uart_um982.write("GPGGA 1\r\n")
+    uart_um982.write("GPGGA 1\r\n")
     while True:
         um982_read_semphore.acquire()
         
@@ -160,7 +163,6 @@ def UM982_thread(para):
         for line in nmea_lines:
             if line.startswith('$GNGGA,'):  # 只处理 GGA 数据
                 global_gga_data = line
-                printf(line)
 
 def uart_call(para):
     global received
