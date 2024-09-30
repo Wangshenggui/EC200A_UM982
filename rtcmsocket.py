@@ -2,10 +2,17 @@ import usocket
 import _thread
 import utime
 import sys
+import ujson
 
 sys.path.append('/usr')
 import um982
 import fs
+
+ip = None
+port = None
+mount = None
+accpas = None
+
 
 # 定义全局变量
 rtcm_sock = None
@@ -15,6 +22,11 @@ def printf(s):
     print("[rtcmsocket]: " + s)
 
 def rtcm_tcp_client():
+    global ip
+    global port
+    global mount
+    global accpas
+    
     global rtcm_sock
     global is_connected
 
@@ -23,20 +35,45 @@ def rtcm_tcp_client():
     # 设置超时为3秒
     rtcm_sock.settimeout(3)
     
-    if fs.CreateFile("cors.txt") == True:
+    # 检查文件是否存在
+    if fs.CreateFile("cors.txt"):
         FileContent = fs.ReadFile("cors.txt")
     else:
-        fs.WriteFile("cors.txt",("120.253.226.97\r\n"
-                                 "8002\r\n"
-                                 "RTCM33_GRCEJ\r\n"
-                                 "Y2VkcjEzOTIwOmZ5eDYyNzMz"))
+        # 写入数据到文件
+        data = {
+            "ip":"120.253.226.97",
+            "port":"8002",
+            "mount":"RTCM33_GRCEJ",
+            "accpas":"Y2VkcjEzOTIwOmZ5eDYyNzMz"
+        }
+        
+        # 将字典数据转换为JSON字符串
+        json_content = ujson.dumps(data)
+        
+        # 写入JSON内容到文件
+        fs.WriteFile("cors.txt", json_content)
         FileContent = fs.ReadFile("cors.txt")
         
     printf(FileContent)
     
+    try:
+        # 提取JSON部分
+        json_part = FileContent[FileContent.index('{'):FileContent.index('}') + 1]
+        # 解析JSON
+        data = ujson.loads(json_part)
+        
+        # 检查键是否存在
+        if "ip" in data and "port" in data and "mount" in data and "accpas" in data:
+            ip = data["ip"]
+            port = data["port"]
+            mount = data["mount"]
+            accpas = data["accpas"]
+    except (ValueError, KeyError) as e:
+        print("解析JSON时发生错误:", e)
+    
     
     try:
-        rtcm_sock.connect(("120.253.226.97",8002))
+        rtcm_sock.connect((ip,int(port)))
     except OSError as e:
         printf("连接失败: " + str(e))
         is_connected = 0
@@ -44,11 +81,13 @@ def rtcm_tcp_client():
 
     is_connected = 1
     request = (
-        "GET /RTCM33_GRCEJ HTTP/1.0\r\n"
+        # "GET /RTCM33_GRCEJ HTTP/1.0\r\n"
+        "GET /" + mount + " HTTP/1.0\r\n"
         "User-Agent: NTRIP GNSSInternetRadio/1.4.10\r\n"
         "Accept: */*\r\n"
         "Connection: close\r\n"
-        "Authorization: Basic Y2VkcjEzOTIwOmZ5eDYyNzMz\r\n"
+        # "Authorization: Basic Y2VkcjEzOTIwOmZ5eDYyNzMz\r\n"
+        "Authorization: Basic " + accpas + "\r\n"
         "\r\n"
     )
     
