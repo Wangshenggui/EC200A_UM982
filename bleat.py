@@ -27,6 +27,14 @@ def AT_thread():
     while True:
         # 获取信号量
         at_semaphore.acquire()
+        
         if "AT\r\n" in ble.at_message:
             ble.ble_send_string("OK\r\n")
+        elif "AT+Name=" in ble.at_message:
+            # 提取名称部分
+            start_index = ble.at_message.index('=') + 1
+            end_index = ble.at_message.index('\r\n', start_index)
+            name = ble.at_message[start_index:end_index]
+            print("Extracted name: " + name)
+            ble.uart_ble.write("AT+QBLENAME=" + name + "\r\n")
     
