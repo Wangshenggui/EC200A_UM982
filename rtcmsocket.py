@@ -3,6 +3,7 @@ import _thread
 import utime
 import sys
 import ujson
+import sim
 
 sys.path.append('/usr')
 import um982
@@ -21,6 +22,31 @@ is_connected = 0  # 0: 未连接, 1: 连接中, 2: 连接成功, 3: 密码错误
 def printf(s):
     print("[rtcmsocket]: " + s)
 
+sim_status_dict={
+    0:"SIM卡不存在/被移除",
+    1:"SIM已经准备好",
+    2:"SIM卡已锁定，等待CHV1密码",
+    3:"SIM卡已被阻拦，需要CHV1密码解锁密码",
+    4:"由于SIM/USIM个性化检查失败，SIM卡被锁定",
+    5:"由于PCK错误导致SIM卡被阻拦，需要MEP密码解除阻拦",
+    6:"需要隐藏电话簿条目的密钥",
+    7:"需要解锁隐藏密钥的编码",
+    8:"SIM卡已锁定，等待CHV2密码",
+    9:"SIM卡被阻拦，需要CHV2解锁密码",
+    10:"由于网络个性化检查失败，SIM卡被锁定",
+    11:"由于NCK不正确，SIM卡被阻拦，需要MEP解锁密码",
+    12:"由于子网络锁个性化检查失败，SIM卡被锁定",
+    13:"由于错误的NSCK，SIM卡被阻拦，需要MEP解锁密码",
+    14:"由于服务提供商个性化检查失败，SIM卡被锁定",
+    15:"由于SPCK错误，SIM卡被阻拦，需要MEP解锁密码",
+    16:"由于企业个性化检查失败，SIM卡被锁定",
+    17:"由于CCK不正确，SIM卡被阻止，需要MEP解锁密码",
+    18:"SIM正在初始化，等待完成",
+    19:"CHV1/CHV2/PIN错误",
+    20:"SIM卡无效",
+    21:"未知状态"
+}
+
 def rtcm_tcp_client():
     global ip
     global port
@@ -29,8 +55,19 @@ def rtcm_tcp_client():
     
     global rtcm_sock
     global is_connected
-
-    rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
+    
+    sim_status = sim.getStatus()
+    if sim_status not in sim_status_dict:
+        printf("接口返回失败")
+    if sim_status != 1:
+        printf("Get SIM status status : {}".format(sim_status_dict[sim_status]))
+    printf("Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    
+    try:
+        rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
+        printf("套接字创建成功")
+    except Exception as e:
+        printf("创建套接字时出错:", e)
     
     # 设置超时为3秒
     rtcm_sock.settimeout(3)
@@ -70,7 +107,6 @@ def rtcm_tcp_client():
             accpas = data["accpas"]
     except (ValueError, KeyError) as e:
         print("解析JSON时发生错误:", e)
-    
     
     try:
         rtcm_sock.connect((ip,int(port)))

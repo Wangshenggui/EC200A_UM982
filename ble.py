@@ -1,6 +1,7 @@
 from machine import UART
 import utime
 import _thread
+from misc import Power
 
 import sys
 # 添加 /usr 目录到模块搜索路径
@@ -36,13 +37,22 @@ ble_send_data_list = [
     ]
 
 def init_ble():
-    printf("ble初始化\r\n")
+    
     global uart_ble
     
     # 开启蓝牙线程
     _thread.start_new_thread(BLE_thread, (uart_ble,))
     uart_ble = UART(UART.UART2, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_ble.set_callback(uart_call)  # 设置接收中断
+    
+    Reason = Power.powerOnReason()
+    if Reason == 2: #由软件复位导致的重启
+        printf("蓝牙已经初始化\r\n")
+        for data in ble_send_data_list:
+            utime.sleep_ms(800)
+        return
+    elif Reason == 1: #上电开机
+        printf("ble初始化\r\n")
     
     for data in ble_send_data_list:
         utime.sleep_ms(800)
