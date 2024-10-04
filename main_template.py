@@ -51,7 +51,7 @@ if __name__ == "__main__":
         
         utime.sleep_ms(500)
         
-        ble.ble_send_string(um982.um982_read_data)
+        # ble.ble_send_string(um982.um982_read_data)
             
         printf("主线程")
         # Power.powerRestart()

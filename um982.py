@@ -6,6 +6,7 @@ import sys
 sys.path.append('/usr')
 import rtcmsocket
 import fs
+import ble
 
 
 uart_um982 = None
@@ -152,7 +153,49 @@ def UM982_thread(para):
     global um982_read_data
     # 串口发送第一个字节会有问题，直接发两次，默认开启GGA
     uart_um982.write("GPGGA 1\r\n")
+    
+    uart_um982.write("GPDTM 1\r\n")
+    uart_um982.write("GPGBS 1\r\n")
     uart_um982.write("GPGGA 1\r\n")
+    uart_um982.write("GPGGAH 1\r\n")
+    uart_um982.write("GPGLL 1\r\n")
+    uart_um982.write("GPGLLH 1\r\n")
+    uart_um982.write("GPGNS 1\r\n")
+    uart_um982.write("GPGNSH 1\r\n")
+    uart_um982.write("GPGRSH 1\r\n")
+    uart_um982.write("GPGRSH 1\r\n")
+    uart_um982.write("GPGST 1\r\n")
+    uart_um982.write("GPGSTH 1\r\n")
+    uart_um982.write("GPTHS 1\r\n")
+    uart_um982.write("GPRMC 1\r\n")
+    uart_um982.write("GPRMCH 1\r\n")
+    uart_um982.write("GPVTG 1\r\n")
+    uart_um982.write("GPVTGH 1\r\n")
+    uart_um982.write("GPZDA 1\r\n")
+    
+# GPDTM           坐标信息
+# GPGBS           卫星故障检测信息
+# GPGGA           卫星定位信息
+# GPGGAH          从天线计算的卫星定位信息
+# GPGLL           地理位置信息
+# GPGLLH          从天线计算的地理位置信息
+# GPGNS           定位数据输出
+# GPGNSH          从天线计算的定位数据输出
+# GPGRS           定位解算的卫星残差
+# GPGRSH          从天线定位解算的卫星残差
+# GPGSA           参与定位解算的卫星信息
+# GPGSAH          从天线参与定位解算的卫星信息
+# GPGST           伪距观测误差信息
+# GPGSTH          从天线计算的伪距观测误差信息
+# GPGSV           可视卫星信息
+# GPGSVH          从天线的可视卫星信息输出
+# GPTHS           航向信息
+# GPRMC           卫星定位信息
+# GPRMCH          从天线的卫星定位信息
+# GPROT           旋转速度和方向信息
+# GPVTG           地面航向与速度信息
+# GPVTGH          从天线的地面航向与速度信息
+# GPZDA           日期和时间
     while True:
         um982_read_semphore.acquire()
         
@@ -163,6 +206,10 @@ def UM982_thread(para):
         for line in nmea_lines:
             if line.startswith('$GNGGA,'):  # 只处理 GGA 数据
                 global_gga_data = line
+                
+            ble.ble_send_string(line)
+            printf(line)
+            utime.sleep_ms(10)
 
 def uart_call(para):
     global received
