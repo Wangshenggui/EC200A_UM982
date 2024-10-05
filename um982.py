@@ -162,13 +162,18 @@ def UM982_thread(para):
     uart_um982.write("GPGLLH 1\r\n")
     uart_um982.write("GPGNS 1\r\n")
     uart_um982.write("GPGNSH 1\r\n")
-    uart_um982.write("GPGRSH 1\r\n")
-    uart_um982.write("GPGRSH 1\r\n")
+    # uart_um982.write("GPGRS 1\r\n")
+    # uart_um982.write("GPGRSH 1\r\n")
+    # uart_um982.write("GPGSA 1\r\n")
+    # uart_um982.write("GPGSAH 1\r\n")
     uart_um982.write("GPGST 1\r\n")
     uart_um982.write("GPGSTH 1\r\n")
+    # uart_um982.write("GPGSV 1\r\n")
+    # uart_um982.write("GPGSVH 1\r\n")
     uart_um982.write("GPTHS 1\r\n")
     uart_um982.write("GPRMC 1\r\n")
     uart_um982.write("GPRMCH 1\r\n")
+    uart_um982.write("GPROT 1\r\n")
     uart_um982.write("GPVTG 1\r\n")
     uart_um982.write("GPVTGH 1\r\n")
     uart_um982.write("GPZDA 1\r\n")
@@ -208,7 +213,6 @@ def UM982_thread(para):
                 global_gga_data = line
                 
             ble.ble_send_string(line)
-            printf(line)
             utime.sleep_ms(10)
 
 def uart_call(para):

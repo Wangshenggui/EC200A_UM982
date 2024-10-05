@@ -15,6 +15,10 @@ import bleat
 
 # 初始化 ble
 uart_ble = ble.init_ble()
+utime.sleep_ms(100)
+ble.ble_send_string("OK\r\n")
+utime.sleep_ms(100)
+ble.ble_send_string("OK\r\n")
 # 初始化 um982
 uart_um982 = um982.init_um982()
 utime.sleep_ms(1100)

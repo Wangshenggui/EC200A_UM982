@@ -58,6 +58,8 @@ def AT_thread():
                     printf(FileContent)
                     printf("系统即将重启...")
                     ble.ble_send_string("系统即将重启...")
+                    utime.sleep_ms(500)
+                    ble.ble_send_string("OK\r\n")
                     # 重启系统
                     Power.powerRestart()
             except (ValueError, KeyError) as e:
