@@ -142,7 +142,7 @@ def RTCM_TCP_thread():
     while True:
         if is_connected == 2:  # 判断TCP是否连接
             if um982.global_gga_data and len(um982.global_gga_data) > 50:  # 检查数据是否为空且长度大于50
-                printf("发送GGA到服务器")
+                # printf("发送GGA到服务器")
                 rtcm_sock.send(um982.global_gga_data + "\r\n")
             else:
                 printf("GGA数据为空或长度不够，无法发送")
@@ -163,7 +163,7 @@ def rtcm_tcp_read():
             utf8_data = data.decode('utf-8')
 
             # 打印接收到的字节数
-            printf("收到数据字节数: " + str(len(data)) + " 字节")
+            # printf("收到数据字节数: " + str(len(data)) + " 字节")
             
             if "ICY 200 OK\r\n" in utf8_data:
                 is_connected = 2
@@ -173,7 +173,7 @@ def rtcm_tcp_read():
                 printf("账号密码错误\r\n")
             else:
                 um982.uart_um982.write(data)
-                printf("收到差分数据\r\n")
+                # printf("收到差分数据\r\n")
     except OSError as e:
         printf("接收数据超时或断开TCP连接: " + str(e))
         return  # 跳出函数

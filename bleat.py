@@ -27,6 +27,8 @@ def init_at():
     _thread.start_new_thread(AT_thread, ())
 
 
+# 创建一个锁对象
+lock = _thread.allocate_lock()
 def AT_thread():
     while True:
         # 获取信号量
@@ -60,19 +62,22 @@ def AT_thread():
                     ble.ble_send_string("系统即将重启...")
                     utime.sleep_ms(500)
                     ble.ble_send_string("OK\r\n")
-                    # 重启系统
+                    # 重启系统 
                     Power.powerRestart()
             except (ValueError, KeyError) as e:
                 printf("解析JSON时发生错误:", e)
         elif "AT+UM982=" in ble.at_message:
-            # 提取指令部分
-            start_index = ble.at_message.index('=') + 1
-            end_index = ble.at_message.index('\r\n', start_index)
-            instruct = ble.at_message[start_index:end_index]
-            um982.uart_um982.write(instruct + "\r\n")
-            utime.sleep_ms(500)
-            ble.ble_send_string("OK\r\n")
-        
+            # 使用锁来保护代码块
+            with lock:
+                # 提取指令部分
+                start_index = ble.at_message.index('=') + 1
+                end_index = ble.at_message.index('\r\n', start_index)
+                instruct = ble.at_message[start_index:end_index]
+                um982.uart_um982.write(instruct + "\r\n")
+                utime.sleep_ms(10)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(10)
+            
         
             
     

@@ -25,6 +25,7 @@ def printf(s):
 
 ble_send_data_list = [
     "AT+QRST\r\n",  #复位
+    "AT+QECHO=0\r\n",
     "AT+QBLEINIT=2\r\n",    #模块为外围设备进行 BLE 初始化
     "AT+QBLEADVPARAM=150,150\r\n",  #设置 BLE 广播参数
     "AT+QBLEGATTSSRV=fff1\r\n", #创建 BLE 服务并设置服务 UUID 为 fff1
@@ -33,6 +34,7 @@ ble_send_data_list = [
     "AT+QBLEGATTSSRVDONE\r\n",  #服务添加完成
     # "AT+QBLENAME=UM982_RTK\r\n",
     "AT+QBLEADVSTART\r\n",   #开启 BLE 广播
+    "AT+QECHO=0\r\n",
     ]
 
 def init_ble():
@@ -70,18 +72,43 @@ def BLE_thread(para):
     global at_message
     while True:
         ble_read_semphore.acquire()
-        printf("信号量")
+        
         
         message = received.decode('utf-8')  # 解码接收到的数据
+        printf("信号量" + message)
         # 判断连接状态
         if "+QBLESTAT:CONNECTED" in message:
             is_connected = True  # 设置连接标志位为True
         elif "+QBLESTAT:DISCONNECTED" in message:
             is_connected = False  # 设置连接标志位为False
         
-        if message.startswith("AT") and message.endswith("\r\n"):
-            at_message = message
-            bleat.at_semaphore.release()  # 释放AT指令信号量
+        # if message.startswith("AT") and message.endswith("\r\n"):
+        #     at_message = message
+        #     bleat.at_semaphore.release()  # 释放AT指令信号量
+            
+        try:
+            # 去除前后空格并按行拆分
+            nmea_lines = message.strip().split('\r\n')
+
+            # 逐行处理 NMEA 消息
+            for line in nmea_lines:
+                if line.startswith("AT") and message.endswith("\r\n"):
+                    print("---------------------------------------------------------------------------" + line)
+                    
+                    at_message = line + "\r\n"  # 保存AT指令
+
+                    # 释放AT指令信号量
+                    bleat.at_semaphore.release()
+                    
+        except AttributeError as e:
+            # 如果 message 是 None 或者 message.strip() 出现问题
+            print("AttributeError in process_nmea_message: " + e)
+        except RuntimeError as e:
+            # 如果信号量释放时出现问题
+            print("RuntimeError in process_nmea_message: " + e)
+        except Exception as e:
+            # 捕获所有其他异常
+            print("Unexpected error in process_nmea_message: " + e)
 
             
             
