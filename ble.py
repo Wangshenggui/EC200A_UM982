@@ -92,7 +92,7 @@ def BLE_thread(para):
 
             # 逐行处理 NMEA 消息
             for line in nmea_lines:
-                if line.startswith("AT") and message.endswith("\r\n"):
+                if line.startswith("AT"):
                     print("---------------------------------------------------------------------------" + line)
                     
                     at_message = line + "\r\n"  # 保存AT指令
@@ -119,7 +119,11 @@ def uart_call(para):
     global received
     received = uart_ble.read()  # 读取所有可用数据
     if received:
-        ble_read_semphore.release()  # 释放信号量
+        # ble_read_semphore.release()  # 释放信号量
+        try:
+            ble_read_semphore.release()  # 释放信号量
+        except RuntimeError as e:
+            print("释放信号量失败: ", e)
         
         
 
