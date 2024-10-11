@@ -19,8 +19,6 @@
 import app_fota
 from misc import Power
 import utime
-utime.sleep_ms(10000)
-
 
 from ftplib import FTP
 
@@ -48,7 +46,7 @@ def fetch_file_list(ftp_url, directory):
         if ftp:
             ftp.quit()  # 确保在结束时关闭连接
 
-if __name__ == "__main__":
+def update_code():
     ftp_url = '47.109.46.41'  # FTP 服务器地址
     directory = '/QuecPythonSourceCode/'  # 目标目录
     files = fetch_file_list(ftp_url, directory)
