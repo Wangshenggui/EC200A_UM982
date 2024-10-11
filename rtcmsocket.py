@@ -13,6 +13,7 @@ ip = None
 port = None
 mount = None
 accpas = None
+thread_id = None
 
 
 # 定义全局变量
@@ -55,6 +56,8 @@ def rtcm_tcp_client():
     
     global rtcm_sock
     global is_connected
+    
+    global thread_id
     
     sim_status = sim.getStatus()
     if sim_status not in sim_status_dict:
@@ -130,7 +133,7 @@ def rtcm_tcp_client():
     # 发送握手消息
     rtcm_sock.send(request.encode())
     
-    _thread.start_new_thread(RTCM_TCP_thread, ())
+    thread_id = _thread.start_new_thread(RTCM_TCP_thread, ())
     
     utime.sleep_ms(500)
     return rtcm_sock

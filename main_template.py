@@ -12,7 +12,6 @@ import rtcmsocket
 import bleat
 
 
-
 # 初始化 ble
 uart_ble = ble.init_ble()
 utime.sleep_ms(100)
@@ -30,16 +29,11 @@ bleat.init_at()
 
 def printf(s):
     print("[main_template]: " + s)
-
-if __name__ == "__main__":
     
-    # fs.CreateFile("um982.ini")   # 创建配置文件
-    # fs.CreateFile("ble.ini")   # 创建配置文件
-    
-    # fs.ReadFile("um982.ini")
-    # fs.ReadFile("ble.ini")
+def main_thread():
+    global is_connected
+    global rtcm_sock
 
-    ble.ble_send_string("System initialization is complete!")
     while True:
         utime.sleep_ms(500)
         
@@ -59,3 +53,23 @@ if __name__ == "__main__":
             
         printf("主线程")
         # Power.powerRestart()
+
+def main():
+    ble.main_thread_id = _thread.start_new_thread(main_thread, ())
+
+if __name__ == "__main__":
+    
+    # fs.CreateFile("um982.ini")   # 创建配置文件
+    # fs.CreateFile("ble.ini")   # 创建配置文件
+    
+    # fs.ReadFile("um982.ini")
+    # fs.ReadFile("ble.ini")
+
+    ble.ble_send_string("System initialization is complete!")
+    
+    main()
+    
+    
+    
+    
+

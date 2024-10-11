@@ -15,6 +15,8 @@ is_connected = False  # 初始状态为未连接
 uart_ble = None
 received = ""
 at_message = ""
+thread_id = None
+main_thread_id = None
 
 # 创建信号量
 ble_read_semphore = _thread.allocate_semphore(1)
@@ -40,9 +42,10 @@ ble_send_data_list = [
 def init_ble():
     
     global uart_ble
+    global thread_id
     
     # 开启蓝牙线程
-    _thread.start_new_thread(BLE_thread, (uart_ble,))
+    thread_id = _thread.start_new_thread(BLE_thread, (uart_ble,))
     uart_ble = UART(UART.UART2, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_ble.set_callback(uart_call)  # 设置接收中断
     
@@ -93,7 +96,7 @@ def BLE_thread(para):
             # 逐行处理 NMEA 消息
             for line in nmea_lines:
                 if line.startswith("AT"):
-                    print("---------------------------------------------------------------------------" + line)
+                    printf("---------------------------------------------------------------------------" + line)
                     
                     at_message = line + "\r\n"  # 保存AT指令
 
@@ -120,10 +123,11 @@ def uart_call(para):
     received = uart_ble.read()  # 读取所有可用数据
     if received:
         # ble_read_semphore.release()  # 释放信号量
-        try:
-            ble_read_semphore.release()  # 释放信号量
-        except RuntimeError as e:
-            print("释放信号量失败: ", e)
+        if thread_id!=0:
+            try:
+                ble_read_semphore.release()  # 释放信号量
+            except RuntimeError as e:
+                print("释放信号量失败: ", e)
         
         
 
@@ -144,7 +148,8 @@ def string_to_hex(s):
 def ble_send_string(s):
     if not s:
         return
-    result = string_to_hex(s)
-    uart_ble.write(result)
+    if is_connected == True:
+        result = string_to_hex(s)
+        uart_ble.write(result)
 
         

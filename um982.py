@@ -12,6 +12,7 @@ import ble
 uart_um982 = None
 um982_read_data = None
 global_gga_data = ""
+thread_id = None
 
 received = ""
 
@@ -113,9 +114,10 @@ def printf(s):
 def init_um982():
     printf("um982初始化\r\n")
     global uart_um982
+    global thread_id
     
     # 开启UM982线程
-    _thread.start_new_thread(UM982_thread, (uart_um982,))
+    thread_id = _thread.start_new_thread(UM982_thread, (uart_um982,))
     uart_um982 = UART(UART.UART1, 115200, 8, 0, 1, 0)  # 串口初始化
     uart_um982.set_callback(uart_call)  # 设置接收中断
     

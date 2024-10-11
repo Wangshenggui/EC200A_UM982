@@ -14,6 +14,9 @@ import rtcmsocket
 
 # 创建信号量
 at_semaphore = _thread.allocate_semphore(1)
+thread_id = None
+
+stop = True
 
 
 def printf(s):
@@ -23,13 +26,15 @@ def printf(s):
 
 
 def init_at():
+    global thread_id
     # 开启AT线程
-    _thread.start_new_thread(AT_thread, ())
+    thread_id = _thread.start_new_thread(AT_thread, ())
 
 
 # 创建一个锁对象
 lock = _thread.allocate_lock()
 def AT_thread():
+    global stop
     while True:
         # 获取信号量
         at_semaphore.acquire()
@@ -77,6 +82,78 @@ def AT_thread():
                 utime.sleep_ms(10)
                 ble.ble_send_string("OK\r\n")
                 utime.sleep_ms(10)
+        elif "AT+UPDATE=" in ble.at_message:
+            # 使用锁来保护代码块
+            with lock:
+                #删除线程
+                # ble.uart_ble.set_callback(None)
+                # _thread.stop_thread(ble.thread_id)
+                
+                
+                if stop == True:
+                    _thread.stop_thread(rtcmsocket.thread_id)
+                    um982.uart_um982.close()
+                    _thread.stop_thread(um982.thread_id)
+                    _thread.stop_thread(ble.main_thread_id)
+                    stop = False
+                printf("states" + str(stop))
+                    
+                # _thread.stop_thread(rtcmsocket.thread_id)
+                # um982.uart_um982.close()
+                # _thread.stop_thread(um982.thread_id)
+                # _thread.stop_thread(ble.main_thread_id)
+                
+
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
+                utime.sleep_ms(500)
+                ble.ble_send_string("OK\r\n")
             
         
             
