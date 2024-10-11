@@ -59,7 +59,7 @@ def ReadFile(FileName):
     try:
         with open(full_path, "r") as f:  # 以只读模式打开文件
             content = f.read()  # 读取文件内容
-        printf("文件内容:\n{}".format(content))  # 打印内容
+        # printf("文件内容:\n{}".format(content))  # 打印内容
         return content  # 返回读取内容
     except Exception as e:
         printf("读取文件时出错: {}".format(e))  # 捕获并打印异常信息
