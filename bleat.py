@@ -86,11 +86,6 @@ def AT_thread():
         elif "AT+UPDATE=" in ble.at_message:
             # 使用锁来保护代码块
             with lock:
-                #删除线程
-                # ble.uart_ble.set_callback(None)
-                # _thread.stop_thread(ble.thread_id)
-                
-                
                 if stop == True:
                     _thread.stop_thread(rtcmsocket.thread_id)
                     um982.uart_um982.close()
@@ -98,64 +93,10 @@ def AT_thread():
                     _thread.stop_thread(ble.main_thread_id)
                     stop = False
                 printf("states" + str(stop))
-                    
-                # _thread.stop_thread(rtcmsocket.thread_id)
-                # um982.uart_um982.close()
-                # _thread.stop_thread(um982.thread_id)
-                # _thread.stop_thread(ble.main_thread_id)
                 
                 appfota.update_code()
 
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
-                # utime.sleep_ms(500)
-                # ble.ble_send_string("OK\r\n")
+                
             
         
             

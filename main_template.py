@@ -80,6 +80,14 @@ def compare_versions(version1, version2):
         return 1
 
     return 0  # version1 == version2
+
+def xor_string(s):
+    result = 0
+    for char in s:
+        result ^= ord(char)  # 对每个字符的ASCII值进行异或运算
+    hex_result = "{:02x}".format(result).upper()  # 格式化为两位十六进制
+    return s + "*" + hex_result + "\r\n"  # 直接返回十六进制字符串
+
     
 def main_thread():
     global update_code_flag
@@ -127,8 +135,9 @@ def main_thread():
         utime.sleep_ms(500)
         
         if(update_code_flag):
-            ble.ble_send_string("There are new versions that need to be updated!!!!!!!")
-            printf("There are new versions that need to be updated!!!!!!!")
+            ble.ble_send_string(xor_string("$UPDATE,TRUE"))
+        else:
+            ble.ble_send_string(xor_string("$UPDATE,FALSE"))
         
         
         printf("主线程")
