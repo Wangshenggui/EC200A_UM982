@@ -92,31 +92,31 @@ def xor_string(s):
 def main_thread():
     global update_code_flag
     
-    text1 = fs.ReadFile("version.txt")
-    printf("本地版本: " + text1)
+    # text1 = fs.ReadFile("version.txt")
+    # printf("本地版本: " + text1)
     
-    ftp_url = '47.109.46.41'  # FTP 服务器地址
-    directory = '/QuecPythonSourceCode/'  # 目标目录
-    filename = 'version.txt'  # 需要读取的文件名
-    text2 = read_file_from_ftp(ftp_url, directory, filename)
-    printf("服务器版本: " + text2)
+    # ftp_url = '47.109.46.41'  # FTP 服务器地址
+    # directory = '/QuecPythonSourceCode/'  # 目标目录
+    # filename = 'version.txt'  # 需要读取的文件名
+    # text2 = read_file_from_ftp(ftp_url, directory, filename)
+    # printf("服务器版本: " + text2)
     
-    result = compare_versions(text1, text2)
+    # result = compare_versions(text1, text2)
 
-    if result < 0:
-        printf(text1 + " < " + text2)
-        update_code_flag = True
-    elif result > 0:
-        printf(text1 + " > " + text2)
-        update_code_flag = False
-    else:
-        printf(text1 + " = " + text2)
-        update_code_flag = False
+    # if result < 0:
+    #     printf(text1 + " < " + text2)
+    #     update_code_flag = True
+    # elif result > 0:
+    #     printf(text1 + " > " + text2)
+    #     update_code_flag = False
+    # else:
+    #     printf(text1 + " = " + text2)
+    #     update_code_flag = False
         
-    if(update_code_flag):
-        printf("有新版本")
-    else:
-        printf("不需要更新代码")
+    # if(update_code_flag):
+    #     printf("有新版本")
+    # else:
+    #     printf("不需要更新代码")
     
 
     while True:
@@ -138,7 +138,6 @@ def main_thread():
             ble.ble_send_string(xor_string("$UPDATE,TRUE"))
         else:
             ble.ble_send_string(xor_string("$UPDATE,FALSE"))
-        
         
         printf("主线程")
 

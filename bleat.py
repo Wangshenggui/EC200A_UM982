@@ -40,6 +40,8 @@ def AT_thread():
         # 获取信号量
         at_semaphore.acquire()
         
+        printf("信号量" + ble.at_message)
+        
         if "AT\r\n" in ble.at_message:
             ble.ble_send_string("OK\r\n")
         elif "AT+Name=" in ble.at_message:

@@ -209,14 +209,14 @@ def UM982_thread(para):
         um982_read_data = received.decode('utf-8')
         
         # 分离数据
-        nmea_lines = um982_read_data.strip().split('\n')
+        nmea_lines = um982_read_data.strip().split('\r\n')
         for line in nmea_lines:
             if line.startswith('$GNGGA,'):  # 只处理 GGA 数据
                 global_gga_data = line
-                
-            ble.ble_send_string(line)
-            utime.sleep_ms(10)
-
+            ble.uart_ble.write(line + "::")
+        ble.uart_ble.write("\r\n")
+        
+        
 def uart_call(para):
     global received
     received = uart_um982.read()  # 读取所有可用数据
