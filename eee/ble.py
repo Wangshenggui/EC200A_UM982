@@ -99,6 +99,7 @@ def uart_call(para):
                 print("释放信号量失败: ", e)
         
 
+# 好像会有问题，不建议使用
 def ble_send_string(s):
     if not s:
         return

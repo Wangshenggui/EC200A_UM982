@@ -147,9 +147,9 @@ def main_thread():
         utime.sleep_ms(500)
         
         if(update_code_flag):
-            ble.ble_send_string(xor_string("$UPDATE,TRUE"))
+            ble.uart_ble.write(xor_string("$UPDATE,TRUE"))
         else:
-            ble.ble_send_string(xor_string("$UPDATE,FALSE"))
+            ble.uart_ble.write(xor_string("$UPDATE,FALSE"))
         
         printf("主线程")
 
