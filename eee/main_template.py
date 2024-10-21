@@ -17,6 +17,7 @@ utime.sleep_ms(5000)
 
 # 初始化 ble
 uart_ble = ble.init_ble()
+ble.ble_send_string("OK\r\n")
 utime.sleep_ms(100)
 ble.ble_send_string("OK\r\n")
 utime.sleep_ms(100)

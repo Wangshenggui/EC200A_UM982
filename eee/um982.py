@@ -208,6 +208,8 @@ def UM982_thread(para):
         
         um982_read_data = received.decode('utf-8')
         
+        printf("信号量" + um982_read_data)
+        
         # 分离数据
         nmea_lines = um982_read_data.strip().split('\r\n')
         for line in nmea_lines:

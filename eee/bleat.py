@@ -51,7 +51,9 @@ def AT_thread():
             name = ble.at_message[start_index:end_index]
             printf("Extracted name: " + name)
             ble.uart_ble.write("AT+QBLENAME=" + name + "\r\n")
-            utime.sleep_ms(500)
+            
+            ble.ble_send_string("OK\r\n")
+            ble.ble_send_string("OK\r\n")
             ble.ble_send_string("OK\r\n")
         elif "AT+{" in ble.at_message:
             try:
@@ -68,8 +70,12 @@ def AT_thread():
                     printf(FileContent)
                     printf("系统即将重启...")
                     ble.ble_send_string("系统即将重启...")
-                    utime.sleep_ms(500)
                     ble.ble_send_string("OK\r\n")
+                    utime.sleep_ms(10)
+                    ble.ble_send_string("OK\r\n")
+                    utime.sleep_ms(10)
+                    ble.ble_send_string("OK\r\n")
+                    utime.sleep_ms(10)
                     # 重启系统 
                     Power.powerRestart()
             except (ValueError, KeyError) as e:
@@ -82,9 +88,9 @@ def AT_thread():
                 end_index = ble.at_message.index('\r\n', start_index)
                 instruct = ble.at_message[start_index:end_index]
                 um982.uart_um982.write(instruct + "\r\n")
-                utime.sleep_ms(10)
                 ble.ble_send_string("OK\r\n")
-                utime.sleep_ms(10)
+                ble.ble_send_string("OK\r\n")
+                ble.ble_send_string("OK\r\n")
         elif "AT+UPDATE=" in ble.at_message:
             # 使用锁来保护代码块
             with lock:
