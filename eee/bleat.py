@@ -32,6 +32,13 @@ def init_at():
     thread_id = _thread.start_new_thread(AT_thread, ())
 
 
+def xor_string(s):
+    result = 0
+    for char in s:
+        result ^= ord(char)  # 对每个字符的ASCII值进行异或运算
+    hex_result = "{:02x}".format(result).upper()  # 格式化为两位十六进制
+    return s + "*" + hex_result + "\r\n"  # 直接返回十六进制字符串
+
 # 创建一个锁对象
 lock = _thread.allocate_lock()
 def AT_thread():
@@ -103,6 +110,19 @@ def AT_thread():
                 printf("states" + str(stop))
                 
                 appfota.update_code()
+                
+        elif "AT+GetUpdate4G" in ble.at_message:
+            # 使用锁来保护代码块
+            with lock:
+                if(appfota.update_flag()):
+                    ble.uart_ble.write(xor_string("$UPDATE,TRUE"))
+                else:
+                    ble.uart_ble.write(xor_string("$UPDATE,FALSE"))
+                ble.ble_send_string("OK\r\n")
+                ble.ble_send_string("OK\r\n")
+                ble.ble_send_string("OK\r\n")
+                
+                
 
                 
             

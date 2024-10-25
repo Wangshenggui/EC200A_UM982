@@ -79,13 +79,13 @@ def BLE_thread(para):
                     
         except AttributeError as e:
             # 如果 message 是 None 或者 message.strip() 出现问题
-            print("AttributeError in process_nmea_message: " + e)
+            print("AttributeError in process_nmea_message: " + str(e))
         except RuntimeError as e:
             # 如果信号量释放时出现问题
-            print("RuntimeError in process_nmea_message: " + e)
+            print("RuntimeError in process_nmea_message: " + str(e))
         except Exception as e:
             # 捕获所有其他异常
-            print("Unexpected error in process_nmea_message: " + e)
+            print("Unexpected error in process_nmea_message: " + str(e))
 
 def uart_call(para):
     global received
@@ -93,8 +93,12 @@ def uart_call(para):
     if received:
         if thread_id!=0:
             try:
-                um982.uart_um982.write(received)
-                ble_read_semphore.release()  # 释放信号量
+                tempstr = received.decode('utf-8')  # 解码接收到的数据
+                if "+CONNECTED" in tempstr or "+DISCONNECTED" in tempstr or "AT+" in tempstr:
+                    ble_read_semphore.release()  # 释放信号量
+                else:
+                    um982.uart_um982.write(received)
+                
             except RuntimeError as e:
                 print("释放信号量失败: ", e)
         
