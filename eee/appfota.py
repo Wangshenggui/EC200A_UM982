@@ -124,8 +124,8 @@ def fetch_file_list(ftp_url, directory):
         
         # 获取文件列表
         files = ftp.nlst()  # 获取目录下所有文件名
-        # 过滤出 .txt 和 .py 文件
-        filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.py')]
+        # 过滤出 .txt 和 .mpy 文件
+        filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.mpy')]
         
         # 打印获取到的文件名
         print("获取到的文件名: {}".format(", ".join(filtered_files)))

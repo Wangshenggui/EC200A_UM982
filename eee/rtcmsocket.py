@@ -120,6 +120,7 @@ def rtcm_tcp_client():
         printf("连接失败: " + str(e))
         syslog.RecordNetworkError("网络连接失败: " + str(e))
         is_connected = 0
+        thread_id = _thread.start_new_thread(RTCM_TCP_thread_temp, ())
         return
 
     is_connected = 1
@@ -153,6 +154,10 @@ def RTCM_TCP_thread():
                 printf("GGA数据为空或长度不够，无法发送")
         
         rtcm_tcp_read()
+        utime.sleep_ms(500)  # 避免占用过多 CPU
+        
+def RTCM_TCP_thread_temp():
+    while True:
         utime.sleep_ms(500)  # 避免占用过多 CPU
 
 
