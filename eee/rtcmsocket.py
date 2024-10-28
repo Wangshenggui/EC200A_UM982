@@ -8,6 +8,7 @@ import sim
 sys.path.append('/usr')
 import um982
 import fs
+import syslog
 
 ip = None
 port = None
@@ -64,7 +65,9 @@ def rtcm_tcp_client():
         printf("接口返回失败")
     if sim_status != 1:
         printf("Get SIM status status : {}".format(sim_status_dict[sim_status]))
+        syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
     printf("Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    
     
     try:
         rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
@@ -79,12 +82,12 @@ def rtcm_tcp_client():
     if fs.CreateFile("cors.txt"):
         FileContent = fs.ReadFile("cors.txt")
     else:
-        # 写入数据到文件
+        # 写入数据到文件(默认没有CORS账号信息，需要通过蓝牙进行配置)
         data = {
-            "ip":"120.253.226.97",
-            "port":"8002",
-            "mount":"RTCM33_GRCEJ",
-            "accpas":"Y2VkcjEzOTIwOmZ5eDYyNzMz"
+            "ip":"xxx.xxx.xxx.xxx",
+            "port":"65536",
+            "mount":"xxxxxxxxxxxx",
+            "accpas":"xxxxxxxxxxxxxxxxxxxxxxxx"
         }
         
         # 将字典数据转换为JSON字符串
@@ -115,17 +118,16 @@ def rtcm_tcp_client():
         rtcm_sock.connect((ip,int(port)))
     except OSError as e:
         printf("连接失败: " + str(e))
+        syslog.RecordNetworkError("网络连接失败: " + str(e))
         is_connected = 0
         return
 
     is_connected = 1
     request = (
-        # "GET /RTCM33_GRCEJ HTTP/1.0\r\n"
         "GET /" + mount + " HTTP/1.0\r\n"
         "User-Agent: NTRIP GNSSInternetRadio/1.4.10\r\n"
         "Accept: */*\r\n"
         "Connection: close\r\n"
-        # "Authorization: Basic Y2VkcjEzOTIwOmZ5eDYyNzMz\r\n"
         "Authorization: Basic " + accpas + "\r\n"
         "\r\n"
     )
@@ -149,8 +151,6 @@ def RTCM_TCP_thread():
                 rtcm_sock.send(um982.global_gga_data + "\r\n")
             else:
                 printf("GGA数据为空或长度不够，无法发送")
-        else:
-            printf("未连接RTCM服务器")
         
         rtcm_tcp_read()
         utime.sleep_ms(500)  # 避免占用过多 CPU
@@ -173,15 +173,18 @@ def rtcm_tcp_read():
                 printf(utf8_data)
             elif "ERROR - Bad Password\r\n" in utf8_data:
                 is_connected = 3
+                syslog.RecordNetworkError("账号密码错误")
                 printf("账号密码错误\r\n")
             else:
                 um982.uart_um982.write(data)
                 # printf("收到差分数据\r\n")
     except OSError as e:
         printf("接收数据超时或断开TCP连接: " + str(e))
+        syslog.RecordNetworkError("接收数据超时或断开TCP连接: " + str(e))
         return  # 跳出函数
     except Exception as e:
         printf("断开TCP连接: " + str(e))
+        syslog.RecordNetworkError("断开TCP连接: " + str(e))
         rtcm_sock.close()
         is_connected = 0
 
