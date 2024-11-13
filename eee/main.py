@@ -12,12 +12,14 @@ import fs
 import rtcmsocket
 import bleat
 import appfota
+import usruart
 
 
 utime.sleep_ms(5000)
 
 # 初始化 ble
 uart_ble = ble.init_ble()
+uart_usr = usruart.init_usruart()
 ble.ble_send_string("OK\r\n")
 utime.sleep_ms(100)
 ble.ble_send_string("OK\r\n")
@@ -58,6 +60,7 @@ def main_thread():
         utime.sleep_ms(500)
         
         printf("我是版本1.0.0")
+        
 
 def main():
     ble.main_thread_id = _thread.start_new_thread(main_thread, ())

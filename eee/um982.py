@@ -7,6 +7,7 @@ sys.path.append('/usr')
 import rtcmsocket
 import fs
 import ble
+import usruart
 
 
 uart_um982 = None
@@ -209,6 +210,8 @@ def UM982_thread(para):
         um982_read_data = received.decode('utf-8')
         
         # printf("信号量" + um982_read_data)
+        
+        usruart.uart_usr.write(um982_read_data)
         
         # 分离数据
         nmea_lines = um982_read_data.strip().split('\r\n')

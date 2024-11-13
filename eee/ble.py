@@ -18,6 +18,7 @@ received = ""
 at_message = ""
 thread_id = None
 main_thread_id = None
+at_message_flat = 0
 
 # 创建信号量
 ble_read_semphore = _thread.allocate_semphore(1)
@@ -47,6 +48,7 @@ def BLE_thread(para):
     global received
     global is_connected  # 使用全局变量
     global at_message
+    global at_message_flat
     while True:
         ble_read_semphore.acquire()
         
@@ -74,6 +76,7 @@ def BLE_thread(para):
                     
                     at_message = line + "\r\n"  # 保存AT指令
 
+                    at_message_flat = 1
                     # 释放AT指令信号量
                     bleat.at_semaphore.release()
                     
