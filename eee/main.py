@@ -13,6 +13,7 @@ import rtcmsocket
 import bleat
 import appfota
 import usruart
+import gpio
 
 
 utime.sleep_ms(5000)
@@ -34,6 +35,11 @@ socket_rtcm = rtcmsocket.rtcm_tcp_client()
 bleat.init_at()
 
 
+import sim
+
+phone_num = sim.getPhoneNumber()
+print("Get Phone Number is : {}".format(phone_num))
+
 
 def printf(s):
     print("[main_template]: " + s)
@@ -41,11 +47,17 @@ def printf(s):
 
     
 def main_thread():
+    Bluetooth_AT_Pin = gpio.gpio_out(9)
+    ModuleLED_Pin = gpio.gpio_out(10)
     
-    
+    Bluetooth_AT_Pin.set()
+    ModuleLED_Pin.set()
 
     while True:
         utime.sleep_ms(500)
+        
+        Bluetooth_AT_Pin.toggle()
+        ModuleLED_Pin.toggle()
         
         if rtcmsocket.is_connected == 0:
             rtcm_s = "No SIM card\r\n"

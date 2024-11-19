@@ -97,6 +97,11 @@ def uart_call(para):
         if thread_id!=0:
             try:
                 tempstr = received.decode('utf-8')  # 解码接收到的数据
+                
+                
+                printf(tempstr)
+                
+                
                 if "+CONNECTED" in tempstr or "+DISCONNECTED" in tempstr or "AT+" in tempstr:
                     ble_read_semphore.release()  # 释放信号量
                 else:
