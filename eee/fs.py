@@ -1,74 +1,51 @@
-
 # config.ini
 
+# 配置数据示例
 um982_configdata = "[um982]\nhello world!\niganma"
 
+# 打印文件系统操作的信息
 def printf(s):
     print("[fs]: " + s)
 
-# def CreateFile(s):
-#     path = "/usr/" + s
-    
-#     try:
-#         # 尝试以读写模式打开文件
-#         f = open(path, "r+")
-#         print("文件已存在，直接打开: {}".format(path))
-#         # 写入内容
-#         f.write("打开写入: " + path + "\n")  # 写入内容
-#     except Exception:  # 捕获所有异常
-#         # 文件不存在，创建新文件
-#         print("创建新文件: {}".format(path))
-#         f = open(path, "w+")
-#         filename = s.split('.')[0]  # 获取不带后缀的文件名
-#         if filename == "um982":
-#             data = um982_configdata
-#         else:
-#             data = ble_configdata
-        
-#         # 使用 write() 逐行写入
-#         f.write(data)  # 写入每一行
-        
-#     f.close()  # 关闭文件
-
+# 创建文件函数
 def CreateFile(FileName):
-    full_path = "/usr/" + FileName
+    full_path = "/usr/" + FileName  # 获取文件的完整路径
     
     try:
         with open(full_path, "r"):  # 尝试以只读模式打开文件
-            printf("文件已存在: {}".format(full_path))
-            return True  # 文件已存在
+            printf("文件已存在: {}".format(full_path))  # 如果文件已存在，打印消息
+            return True  # 文件已存在，返回True
     except Exception:
         # 文件不存在，创建新文件
-        printf("创建新文件: {}".format(full_path))
+        printf("创建新文件: {}".format(full_path))  # 打印创建新文件的消息
         with open(full_path, "w") as f:
             pass  # 创建空文件并自动关闭
-        return False  # 文件已创建
+        return False  # 返回False，表示文件已创建
 
+# 写入文件内容的函数
 def WriteFile(FileName, s):
-    full_path = "/usr/" + FileName
+    full_path = "/usr/" + FileName  # 获取文件的完整路径
     
     try:
-        with open(full_path, "w") as f:
-            f.write(s)  # 写入每一行并换行
+        with open(full_path, "w") as f:  # 以写模式打开文件
+            f.write(s)  # 写入指定的内容
     except Exception as e:
-        printf("写入文件时出错: {}".format(e))
+        printf("写入文件时出错: {}".format(e))  # 捕获并打印写入文件时的错误
 
+# 读取文件内容的函数
 def ReadFile(FileName):
-    full_path = "/usr/" + FileName
+    full_path = "/usr/" + FileName  # 获取文件的完整路径
     
     try:
         with open(full_path, "r") as f:  # 以只读模式打开文件
             content = f.read()  # 读取文件内容
-        # printf("文件内容:\n{}".format(content))  # 打印内容
-        return content  # 返回读取内容
+        return content  # 返回读取到的文件内容
     except Exception as e:
-        printf("读取文件时出错: {}".format(e))  # 捕获并打印异常信息
-        return None
+        printf("读取文件时出错: {}".format(e))  # 捕获并打印读取文件时的错误
+        return None  # 如果发生异常，返回None
 
-        
-        
+# 文件系统测试函数
 def fs_test():
-    CreateFile("fs_test.txt")
-    WriteFile("fs_test.txt",um982_configdata)
-    ReadFile("fs_test.txt")
-
+    CreateFile("fs_test.txt")  # 创建名为 fs_test.txt 的文件
+    WriteFile("fs_test.txt", um982_configdata)  # 写入配置数据
+    ReadFile("fs_test.txt")  # 读取并返回文件内容
