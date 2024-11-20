@@ -119,7 +119,7 @@ def update_flag():
     text1 = fs.ReadFile("version.txt")  # 假设 fs 是文件系统对象，读取本地版本文件内容
     
     ftp_url = '47.109.46.41'  # FTP 服务器地址
-    directory = ''  # 目标目录（为空表示根目录）
+    directory = 'EC200A_UM982'  # 目标目录（为空表示根目录）
     filename = 'version.txt'  # 服务器上版本文件的文件名
     
     # 从 FTP 服务器读取版本文件
@@ -202,7 +202,7 @@ def update_code():
     """
     # FTP 服务器的连接信息
     ftp_url = "47.109.46.41"  # FTP 服务器地址
-    directory = ""  # 目标目录（根目录）
+    directory = "EC200A_UM982"  # 目标目录（根目录）
     username = "QPyCode"  # 登录用户名
     password = "123456"  # 登录密码
 
@@ -210,7 +210,7 @@ def update_code():
     files = fetch_file_list(ftp_url, directory, username, password)
 
     # 根据获取的文件列表生成下载链接和目标文件路径
-    download_list = [{'url': 'http://47.109.46.41/QPyCode/%s' % (file),  # FTP 文件下载 URL
+    download_list = [{'url': 'http://47.109.46.41/QPyCode-EC200A_UM982/%s' % (file),  # FTP 文件下载 URL
                       'file_name': '/usr/%s' % file}  # 文件存储路径
                      for file in files]  # 对每个文件生成对应的字典信息
 
