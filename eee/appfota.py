@@ -178,7 +178,7 @@ def fetch_file_list(ftp_url, directory, username, password):
         files = ftp.nlst()  # 使用 nlst() 获取目录下的文件和目录列表
         
         # 过滤出扩展名为 .txt 或 .mpy 的文件
-        filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.mpy')]
+        filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.py') or f.endswith('.mpy')]
         
         # 打印获取到的文件名列表
         print("获取到的文件名: {}".format(", ".join(filtered_files)))
