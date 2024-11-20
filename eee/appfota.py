@@ -34,9 +34,22 @@ def read_file_from_ftp(ftp_url, directory, filename):
     file_content = ""
 
     try:
+        # ftp = FTP(ftp_url)
+        # ftp.login()
+        # ftp.cwd(directory)
+        
+        # ///////////////////////////////////
+        username = "QPyCode"
+        password = "123456"
+        # 连接到 FTP 服务器
         ftp = FTP(ftp_url)
-        ftp.login()
-        ftp.cwd(directory)
+        
+        # 启用被动模式
+        ftp.set_pasv(True)
+        
+        ftp.login(username, password)  # 使用指定用户名和密码登录
+        ftp.cwd(directory)  # 切换到目标目录
+        # ///////////////////////////////////
 
         def handle_binary_data(data):
             nonlocal file_content
@@ -88,9 +101,12 @@ def update_flag():
     # printf("本地版本: " + text1)
     
     ftp_url = '47.109.46.41'  # FTP 服务器地址
-    directory = '/QuecPythonSourceCode/'  # 目标目录
+    directory = ''  # 目标目录
     filename = 'version.txt'  # 需要读取的文件名
     text2 = read_file_from_ftp(ftp_url, directory, filename)
+    
+    
+    
     if (text2 == ""):
         text2 = text1
     # printf("服务器版本: " + text2)
@@ -111,15 +127,43 @@ def update_flag():
     #     printf("有新版本")
     # else:
     #     printf("不需要更新代码")
-        
+    
     return update_code_flag
 
-def fetch_file_list(ftp_url, directory):
-    ftp = None  # 在这里初始化 ftp 变量
+# def fetch_file_list(ftp_url, directory):
+#     ftp = None  # 在这里初始化 ftp 变量
+#     try:
+#         # 连接到 FTP 服务器
+#         ftp = FTP(ftp_url)
+#         ftp.login()  # 使用匿名登录
+#         ftp.cwd(directory)  # 切换到目标目录
+        
+#         # 获取文件列表
+#         files = ftp.nlst()  # 获取目录下所有文件名
+#         # 过滤出 .txt 和 .mpy 文件
+#         filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.mpy')]
+        
+#         # 打印获取到的文件名
+#         print("获取到的文件名: {}".format(", ".join(filtered_files)))
+        
+#         return filtered_files
+#     except Exception as e:
+#         print("无法获取文件列表: {}".format(e))
+#         return []
+#     finally:
+#         if ftp:
+#             ftp.quit()  # 确保在结束时关闭连接
+            
+def fetch_file_list(ftp_url, directory, username, password):
+    ftp = None  # 初始化 FTP 对象
     try:
         # 连接到 FTP 服务器
         ftp = FTP(ftp_url)
-        ftp.login()  # 使用匿名登录
+        
+        # 启用被动模式
+        ftp.set_pasv(True)
+        
+        ftp.login(username, password)  # 使用指定用户名和密码登录
         ftp.cwd(directory)  # 切换到目标目录
         
         # 获取文件列表
@@ -139,12 +183,15 @@ def fetch_file_list(ftp_url, directory):
             ftp.quit()  # 确保在结束时关闭连接
 
 def update_code():
-    ftp_url = '47.109.46.41'  # FTP 服务器地址
-    directory = '/QuecPythonSourceCode/'  # 目标目录
-    files = fetch_file_list(ftp_url, directory)
+    ftp_url = "47.109.46.41"
+    directory = ""
+    username = "QPyCode"
+    password = "123456"
+
+    files = fetch_file_list(ftp_url, directory, username, password)
 
     # 生成下载列表
-    download_list = [{'url': 'http://%s/FTP/QuecPythonSourceCode/%s' % (ftp_url, file), 
+    download_list = [{'url': 'http://47.109.46.41/QPyCode/%s' % (file), 
                       'file_name': '/usr/%s' % file}
                      for file in files]
 
