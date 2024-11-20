@@ -149,7 +149,7 @@ def update_flag():
 
             
 def fetch_file_list(ftp_url, directory, username, password):
-    """ 从 FTP 服务器获取指定目录下的文件列表（.txt 和 .mpy 文件）
+    """ 从 FTP 服务器获取指定目录下的文件列表（.txt .py .mpy 文件）
 
     参数:
     ftp_url (str): FTP 服务器的地址
@@ -158,7 +158,7 @@ def fetch_file_list(ftp_url, directory, username, password):
     password (str): 用于登录 FTP 的密码
 
     返回:
-    list: 返回一个包含所有符合条件的文件名的列表（.txt 和 .mpy 文件）
+    list: 返回一个包含所有符合条件的文件名的列表（.txt .py .mpy 文件）
     """
     ftp = None  # 初始化 FTP 对象，用于连接和操作 FTP 服务器
     try:
