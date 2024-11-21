@@ -29,7 +29,7 @@ def read_file_from_ftp(ftp_url, directory, filename):
     try:
         # 设定 FTP 登录的用户名和密码
         username = "FTP"
-        password = "123456"
+        password = "-jGCu!&r@a]{CmX_"
         
         # 连接到 FTP 服务器
         ftp = FTP(ftp_url)
@@ -204,7 +204,7 @@ def update_code():
     ftp_url = "47.109.46.41"  # FTP 服务器地址
     directory = "QPyCode/EC200A_UM982"  # 目标目录（根目录）
     username = "FTP"  # 登录用户名
-    password = "123456"  # 登录密码
+    password = "-jGCu!&r@a]{CmX_"  # 登录密码
 
     # 从 FTP 服务器获取文件列表
     files = fetch_file_list(ftp_url, directory, username, password)
