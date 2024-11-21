@@ -28,7 +28,7 @@ def read_file_from_ftp(ftp_url, directory, filename):
     file_content = ""  # 初始化一个空字符串来存储文件内容
     try:
         # 设定 FTP 登录的用户名和密码
-        username = "QPyCode"
+        username = "FTP"
         password = "123456"
         
         # 连接到 FTP 服务器
@@ -119,7 +119,7 @@ def update_flag():
     text1 = fs.ReadFile("version.txt")  # 假设 fs 是文件系统对象，读取本地版本文件内容
     
     ftp_url = '47.109.46.41'  # FTP 服务器地址
-    directory = 'EC200A_UM982'  # 目标目录（为空表示根目录）
+    directory = 'QPyCode/EC200A_UM982'  # 目标目录（为空表示根目录）
     filename = 'version.txt'  # 服务器上版本文件的文件名
     
     # 从 FTP 服务器读取版本文件
@@ -202,8 +202,8 @@ def update_code():
     """
     # FTP 服务器的连接信息
     ftp_url = "47.109.46.41"  # FTP 服务器地址
-    directory = "EC200A_UM982"  # 目标目录（根目录）
-    username = "QPyCode"  # 登录用户名
+    directory = "QPyCode/EC200A_UM982"  # 目标目录（根目录）
+    username = "FTP"  # 登录用户名
     password = "123456"  # 登录密码
 
     # 从 FTP 服务器获取文件列表

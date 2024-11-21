@@ -85,12 +85,6 @@ def main_thread():
         # 打印版本信息
         printf("我是版本1.0.0")
         
-        # 示例调用，注释中展示如何使用FOTA获取文件列表
-        # ftp_url = "47.109.46.41"
-        # directory = ""
-        # username = "QPyCode"
-        # password = "123456"
-        # files = appfota.fetch_file_list(ftp_url, directory, username, password)
 
 # 启动主线程
 def main():
