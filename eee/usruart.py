@@ -1,4 +1,4 @@
-from machine import UART
+from machine import UART # type: ignore
 import _thread
 
 import sys

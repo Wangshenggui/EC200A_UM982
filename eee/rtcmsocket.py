@@ -1,15 +1,15 @@
 # 导入所需的库
-import usocket  # 用于网络连接和套接字操作
+import usocket  # type: ignore # 用于网络连接和套接字操作
 import _thread  # 用于多线程操作
-import utime  # 用于时间管理
+import utime  # type: ignore # 用于时间管理
 import sys  # 用于系统级操作
-import ujson  # 用于JSON解析
-import sim  # 与SIM卡操作相关的模块
+import ujson  # type: ignore # 用于JSON解析
+import sim  # type: ignore # 与SIM卡操作相关的模块
 
 sys.path.append('/usr')  # 将'/usr'路径添加到系统路径
 import um982  # 引入um982模块，可能是与硬件或外设相关的操作
 import fs  # 文件系统操作模块
-import syslog  # 日志记录模块
+import syslog  # type: ignore # 日志记录模块
 
 # 定义一些全局变量
 ip = None  # 存储服务器IP地址

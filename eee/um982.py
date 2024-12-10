@@ -1,11 +1,8 @@
-from machine import UART
-import utime
+from machine import UART # type: ignore
 import _thread
 
 import sys
 sys.path.append('/usr')
-import rtcmsocket
-import fs
 import ble
 import usruart
 

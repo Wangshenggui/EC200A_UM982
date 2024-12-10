@@ -1,7 +1,7 @@
-import utime
+import utime # type: ignore
 import _thread
-import ujson
-from misc import Power
+import ujson # type: ignore
+from misc import Power # type: ignore
 
 import sys
 # 添加 /usr 目录到模块搜索路径
@@ -68,8 +68,8 @@ def AT_thread():
                 # 发送设置蓝牙名称的命令
                 ble.uart_ble.write("AT+QBLENAME=" + name + "\r\n")
                 ble.ble_send_string("OK\r\n")
-                ble.ble_send_string("OK\r\n")
-                ble.ble_send_string("OK\r\n")
+                # ble.ble_send_string("OK\r\n")
+                # ble.ble_send_string("OK\r\n")
             elif "AT+{" in ble.at_message:
                 try:
                     # 处理带有JSON数据的AT命令
@@ -85,11 +85,11 @@ def AT_thread():
                         printf("系统即将重启...")
                         ble.ble_send_string("系统即将重启...")
                         ble.ble_send_string("OK\r\n")
-                        utime.sleep_ms(10)
-                        ble.ble_send_string("OK\r\n")
-                        utime.sleep_ms(10)
-                        ble.ble_send_string("OK\r\n")
-                        utime.sleep_ms(10)
+                        # utime.sleep_ms(10)
+                        # ble.ble_send_string("OK\r\n")
+                        # utime.sleep_ms(10)
+                        # ble.ble_send_string("OK\r\n")
+                        # utime.sleep_ms(10)
                         # 重启系统
                         Power.powerRestart()
                 except (ValueError, KeyError) as e:
@@ -104,8 +104,8 @@ def AT_thread():
                     # 发送UM982指令
                     um982.uart_um982.write(instruct + "\r\n")
                     ble.ble_send_string("OK\r\n")
-                    ble.ble_send_string("OK\r\n")
-                    ble.ble_send_string("OK\r\n")
+                    # ble.ble_send_string("OK\r\n")
+                    # ble.ble_send_string("OK\r\n")
             elif "AT+UPDATE=" in ble.at_message:
                 # 处理更新命令
                 with lock:
@@ -127,8 +127,8 @@ def AT_thread():
                     else:
                         ble.uart_ble.write(xor_string("$UPDATE,FALSE"))
                     ble.ble_send_string("OK\r\n")
-                    ble.ble_send_string("OK\r\n")
-                    ble.ble_send_string("OK\r\n")
+                    # ble.ble_send_string("OK\r\n")
+                    # ble.ble_send_string("OK\r\n")
         # 处理用户串口的AT命令
         elif ble.at_message_flat == 2:
             if "AT\r\n" in usruart.usr_at_message:

@@ -1,7 +1,5 @@
-from machine import UART
-import utime
+from machine import UART # type: ignore
 import _thread
-from misc import Power
 import sys
 # 添加 /usr 目录到模块搜索路径，以便导入自定义模块
 sys.path.append('/usr')
@@ -42,7 +40,7 @@ def init_ble():
     printf("ble完成初始化\r\n")
     
     # 发送初始化完成的提示信息
-    ble_send_string("BLE初始化完成\r\n")
+    # ble_send_string("BLE初始化完成\r\n")
     
     return uart_ble  # 返回 UART 实例，以便在其他地方使用
 

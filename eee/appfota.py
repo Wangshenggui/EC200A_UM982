@@ -1,6 +1,5 @@
-import app_fota
-from misc import Power
-import utime
+import app_fota # type: ignore
+from misc import Power # type: ignore
 
 from ftplib import FTP
 import fs

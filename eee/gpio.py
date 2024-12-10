@@ -1,4 +1,5 @@
-import machine  # 导入 machine 模块，用于操作硬件
+import machine  # type: ignore # 导入 machine 模块，用于操作硬件
+import utime  # type: ignore # 导入utime模块，用于延时
 
 # 定义一个控制GPIO输出的类
 class gpio_out:
@@ -23,3 +24,20 @@ class gpio_out:
             self.reset()  # 如果当前状态是开，则调用 reset() 关闭引脚
         else:
             self.set()  # 如果当前状态是关，则调用 set() 打开引脚
+            
+    
+    def style_1(self):
+        """LED 快闪，每 0.2 秒闪烁一次"""
+        self.toggle()
+        utime.sleep_ms(200)
+        
+    def style_2(self):
+        """常亮1s,灭200ms"""
+        self.set()
+        utime.sleep_ms(1800)
+        self.reset()
+        utime.sleep_ms(200)
+
+
+            
+            

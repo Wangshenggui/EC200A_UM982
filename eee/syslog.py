@@ -1,3 +1,7 @@
+SysLampSignalState = 0    # 存储灯语（lamp signal）信息
+
+
+
 # 记录网络错误信息的变量
 NetworkErrorMessage_n = 0  # 网络错误编号计数器
 NetworkErrorMessage = ""   # 存储网络错误信息的字符串
@@ -19,3 +23,4 @@ def GetNetworkErrorMessage():
     
     # 返回记录的所有网络错误信息
     return NetworkErrorMessage
+ # type: ignore
