@@ -5,6 +5,9 @@ import utime  # type: ignore # 用于时间管理
 import sys  # 用于系统级操作
 import ujson  # type: ignore # 用于JSON解析
 import sim  # type: ignore # 与SIM卡操作相关的模块
+import time
+import net # type: ignore
+import dataCall # type: ignore
 
 sys.path.append('/usr')  # 将'/usr'路径添加到系统路径
 import um982  # 引入um982模块，可能是与硬件或外设相关的操作
@@ -57,14 +60,97 @@ def rtcm_tcp_client():
     global ip, port, mount, accpas
     global rtcm_sock, is_connected, thread_id
     
+    # # 获取SIM卡状态
+    # sim_status = sim.getStatus()
+    # if sim_status not in sim_status_dict:
+    #     printf("接口返回失败")
+    # if sim_status != 1:
+    #     printf("Get SIM status status : {}".format(sim_status_dict[sim_status]))
+    #     syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
+    # printf("Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    
+    retry_count = 0
+    retry_flag = 1
     # 获取SIM卡状态
-    sim_status = sim.getStatus()
-    if sim_status not in sim_status_dict:
-        printf("接口返回失败")
-    if sim_status != 1:
-        printf("Get SIM status status : {}".format(sim_status_dict[sim_status]))
-        syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
-    printf("Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    while retry_flag == 1:
+        sim_status = sim.getStatus()
+        if sim_status not in sim_status_dict:
+            print("-------------------------------接口返回失败")
+        elif sim_status != 1:
+            print("-------------------------------Get SIM status status : {}".format(sim_status_dict[sim_status]))
+            # syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
+        elif sim_status == 1:
+            print("-------------------------------Get sim_status is : {}".format(sim_status_dict[sim_status]))
+            retry_flag = 1
+            break  # SIM 状态为 1，退出循环
+        
+        retry_count += 1
+        if retry_count > 15:  # 超过15次直接退出
+            print("SIM状态检查超过 15 次，跳过数据状态检查，退出...")
+            retry_flag = 0
+            break
+        time.sleep(1)  # 等待 1 秒后重试
+        
+    print("-----------------------------rrr--Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    
+    retry_count = 0
+    while retry_flag == 1:
+        # 获取网络状态
+        net_status = net.getState()
+        
+        # 解包返回的两个列表
+        status_1, status_2 = net_status
+        
+        # 输出状态
+        print("{0}<<<".format(net_status))
+        
+        # 检查条件（根据需要自定义条件）
+        if status_1[0] == 1 and status_2[-2] == 65535:
+            print("网络处于预期状态。退出...")
+            break  # 条件满足，退出循环
+        
+        retry_count += 1
+        if retry_count > 15:  # 超过15次直接退出
+            print("网络状态检查超过 15 次，跳过数据状态检查，退出...")
+            retry_flag = 0
+            break
+        # 如果不满足条件，等待一段时间后继续
+        time.sleep(1)  # 等待 1 秒
+        
+    retry_count = 0
+    while retry_flag == 1:
+        data_status = dataCall.getInfo(1, 0)
+        # data_status 是一个元组，第三个元素是列表
+        if isinstance(data_status, tuple) and len(data_status) > 2:
+            values = data_status[2]
+            if isinstance(values, list) and len(values) > 2:
+                # 判断第一个值是否为 1
+                is_first_value_one = values[0] == 1
+                # 判断第三个值是否非 '0.0.0.0'
+                is_third_value_not_zero = values[2] != '0.0.0.0'
+                
+                # 打印或处理逻辑
+                if is_first_value_one and is_third_value_not_zero:
+                    print("条件满足，处理逻辑...")
+                    break
+                else:
+                    print("条件未满足，继续检查...")
+            else:
+                print("data_status[2] 不是有效列表或长度不足。")
+        else:
+            print("data_status 不是有效元组或长度不足。")
+            
+        print("{0}<<<".format(data_status))
+        retry_count += 1
+        if retry_count > 15:  # 超过15次直接退出
+            print("ip状态检查超过 15 次，跳过数据状态检查，退出...")
+            retry_flag = 0
+            break
+        time.sleep(1)  # 等待 1 秒
+
+
+        
+    
     
     try:
         # 创建TCP套接字

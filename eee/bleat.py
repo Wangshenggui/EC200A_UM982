@@ -2,6 +2,7 @@ import utime # type: ignore
 import _thread
 import ujson # type: ignore
 from misc import Power # type: ignore
+import voiceCall # type: ignore
 
 import sys
 # 添加 /usr 目录到模块搜索路径
@@ -45,6 +46,33 @@ def xor_string(s):
 # 创建一个锁对象用于线程安全的资源访问
 lock = _thread.allocate_lock()
 
+# 定义回调函数来处理模块的回调事件
+def event_callback(event_args):
+    """
+    处理 voiceCall 模块的回调事件。
+    :param event_args: tuple，回调事件参数
+    """
+    # 解构回调参数
+    event_type, call_id, reason_code, state_code, reserved1, reserved2, phone_number, number_type, extra_info = event_args
+
+    # 打印回调信息
+    print("收到回调事件: {0}".format(event_args))
+    
+    # 根据事件类型处理逻辑
+    if event_type == 14:  # 呼出中
+        print("正在拨打电话：{0}...".format(phone_number))
+    elif event_type == 11:  # 电话已接通
+        print("电话已接通：{0}。".format(phone_number))
+    elif event_type == 12:  # 电话已挂断
+        print("电话已挂断：{0}。".format(phone_number))
+        rtcmsocket.rtcm_sock.close()
+        rtcmsocket.rtcm_tcp_client()
+    else:
+        print("未知事件类型：{0}".format(event_type))
+
+# 注册回调函数（假设模块需要手动注册回调）
+voiceCall.setCallback(event_callback)
+        
 # AT指令处理的主线程
 def AT_thread():
     global stop
@@ -59,6 +87,24 @@ def AT_thread():
             if "AT\r\n" in ble.at_message:
                 # 如果是AT命令，返回OK
                 ble.ble_send_string("OK\r\n")
+            elif "AT+Call=" in ble.at_message:
+                # 处理打电话命令
+                with lock:
+                    start_index = ble.at_message.index('=') + 1
+                    end_index = ble.at_message.index('\r\n', start_index)
+                    instruct = ble.at_message[start_index:end_index]
+                    
+                    # um982.uart_um982.write(instruct + "\r\n")
+                    printf(instruct)
+                    
+                    voiceCall.callEnd()
+                    voiceCall.callEnd()
+                    voiceCall.callEnd()
+                    result = voiceCall.callStart(instruct)    # 打电话
+                    if result == 0:
+                        print("电话拨打成功，正在呼出...")
+                    else:
+                        print("电话拨打失败，错误码：{0}".format(result))
             elif "AT+Name=" in ble.at_message:
                 # 处理设置蓝牙名称的命令
                 start_index = ble.at_message.index('=') + 1
@@ -134,6 +180,24 @@ def AT_thread():
             if "AT\r\n" in usruart.usr_at_message:
                 # 如果是AT命令，返回OK
                 usruart.usr_send_string("OK\r\n")
+            elif "AT+Call=" in usruart.usr_at_message:
+                # 处理打电话命令
+                with lock:
+                    start_index = usruart.usr_at_message.index('=') + 1
+                    end_index = usruart.usr_at_message.index('\r\n', start_index)
+                    instruct = usruart.usr_at_message[start_index:end_index]
+                    
+                    # um982.uart_um982.write(instruct + "\r\n")
+                    printf(instruct)
+                    
+                    voiceCall.callEnd()
+                    voiceCall.callEnd()
+                    voiceCall.callEnd()
+                    result = voiceCall.callStart(instruct)    # 打电话
+                    if result == 0:
+                        print("电话拨打成功，正在呼出...")
+                    else:
+                        print("电话拨打失败，错误码：{0}".format(result))
             elif "AT+Name=" in usruart.usr_at_message:
                 # 处理设置串口名称的命令
                 start_index = usruart.usr_at_message.index('=') + 1

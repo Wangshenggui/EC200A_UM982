@@ -13,7 +13,9 @@ import syslog   # type: ignore # 导入系统日志模块
 
 
 
-utime.sleep_ms(6000)  # 延时5秒，确保系统初始化
+# utime.sleep_ms(3000)  # 延时5秒，确保系统初始化
+# 初始化RTC通信套接字
+socket_rtcm = rtcmsocket.rtcm_tcp_client()
 
 # 初始化蓝牙通信
 uart_ble = ble.init_ble()  
@@ -30,8 +32,7 @@ ble.ble_send_string("OK\r\n")
 uart_um982 = um982.init_um982()  
 utime.sleep_ms(1100)
 
-# 初始化RTC通信套接字
-socket_rtcm = rtcmsocket.rtcm_tcp_client()
+
 
 # 初始化AT命令处理
 bleat.init_at()
@@ -49,7 +50,7 @@ ModuleLED_Pin.set()
 def printf(s):
     print("[main_template]: " + s)
 
-import voiceCall # type: ignore
+
 # 主线程函数
 def main_thread():
     # voiceCall.callStart('13985821802')    # 打电话
@@ -72,12 +73,15 @@ def main_thread():
         
         # 将连接状态发送给蓝牙
         # ble.ble_send_string(rtcm_s)   # 引起串口冲突
-        printf(rtcm_s)
+        # printf(rtcm_s)
         
         utime.sleep_ms(500)  # 延时500毫秒
 
         # 打印版本信息
         # printf("我是版本1.0.0")
+        import net
+        print(">>>{0}".format(net.csqQueryPoll()))
+        print("{0}<<<".format(net.getState()))
         
 
 

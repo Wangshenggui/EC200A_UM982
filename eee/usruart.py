@@ -63,9 +63,11 @@ def USR_thread(para):
                     
                     usr_at_message = line + "\r\n"  # 保存 AT 指令
 
-                    ble.at_message_flat = 2  # 设置 AT 消息标记
-                    # 释放 AT 指令的信号量，通知其他线程处理 AT 指令
-                    bleat.at_semaphore.release()
+                    # 如果最后一行以 "\r\n" 结尾，则释放信号量
+                    if message.endswith('\r\n'):
+                        ble.at_message_flat = 2  # 设置 AT 消息标记
+                        # 释放 AT 指令的信号量，通知其他线程处理 AT 指令
+                        bleat.at_semaphore.release()
                     
         except AttributeError as e:
             # 处理 AttributeError 异常（例如数据为空或格式不对）

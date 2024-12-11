@@ -75,9 +75,11 @@ def BLE_thread(para):
                     
                     at_message = line + "\r\n"  # 保存AT指令
 
-                    at_message_flat = 1  # 标记有新的 AT 指令
-                    # 释放 AT 指令信号量
-                    bleat.at_semaphore.release()
+                    # 如果最后一行以 "\r\n" 结尾，则释放信号量
+                    if message.endswith('\r\n'):
+                        at_message_flat = 1  # 标记有新的 AT 指令
+                        # 释放 AT 指令信号量
+                        bleat.at_semaphore.release()
                     
         except AttributeError as e:
             # 处理异常：如果 message 是 None 或者 message.strip() 出现问题
@@ -101,7 +103,7 @@ def uart_call(para):
                 printf(tempstr)  # 打印接收到的消息
                 
                 # 如果接收到的是连接或断开消息或 AT 指令，释放信号量
-                if "+CONNECTED" in tempstr or "+DISCONNECTED" in tempstr or "AT+" in tempstr:
+                if "+CONNECTED" in tempstr or "+DISCONNECTED" in tempstr or "AT" in tempstr:
                     ble_read_semphore.release()  # 释放信号量
                 else:
                     # 将数据发送到 um982 模块
