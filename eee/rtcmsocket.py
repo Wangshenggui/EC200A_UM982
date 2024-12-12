@@ -12,7 +12,9 @@ import dataCall # type: ignore
 sys.path.append('/usr')  # 将'/usr'路径添加到系统路径
 import um982  # 引入um982模块，可能是与硬件或外设相关的操作
 import fs  # 文件系统操作模块
-import syslog  # type: ignore # 日志记录模块
+
+# 调试
+DEBUG = True
 
 # 定义一些全局变量
 ip = None  # 存储服务器IP地址
@@ -27,7 +29,8 @@ is_connected = 0  # 连接状态（0: 未连接, 1: 连接中, 2: 连接成功, 
 
 # 输出调试信息的函数
 def printf(s):
-    print("[rtcmsocket]: " + s)
+    if DEBUG:
+        print("[rtcmsocket]: " + s)
 
 # SIM卡状态字典
 sim_status_dict = {
@@ -60,38 +63,28 @@ def rtcm_tcp_client():
     global ip, port, mount, accpas
     global rtcm_sock, is_connected, thread_id
     
-    # # 获取SIM卡状态
-    # sim_status = sim.getStatus()
-    # if sim_status not in sim_status_dict:
-    #     printf("接口返回失败")
-    # if sim_status != 1:
-    #     printf("Get SIM status status : {}".format(sim_status_dict[sim_status]))
-    #     syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
-    # printf("Get sim_status is : {}".format(sim_status_dict[sim_status]))
-    
     retry_count = 0
     retry_flag = 1
     # 获取SIM卡状态
     while retry_flag == 1:
         sim_status = sim.getStatus()
         if sim_status not in sim_status_dict:
-            print("-------------------------------接口返回失败")
+            printf("-------------------------------接口返回失败")
         elif sim_status != 1:
-            print("-------------------------------Get SIM status status : {}".format(sim_status_dict[sim_status]))
-            # syslog.RecordNetworkError(str.format(sim_status_dict[sim_status]))
+            printf("-------------------------------Get SIM status status : {}".format(sim_status_dict[sim_status]))
         elif sim_status == 1:
-            print("-------------------------------Get sim_status is : {}".format(sim_status_dict[sim_status]))
+            printf("-------------------------------Get sim_status is : {}".format(sim_status_dict[sim_status]))
             retry_flag = 1
             break  # SIM 状态为 1，退出循环
         
         retry_count += 1
         if retry_count > 15:  # 超过15次直接退出
-            print("SIM状态检查超过 15 次，跳过数据状态检查，退出...")
+            printf("SIM状态检查超过 15 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         time.sleep(1)  # 等待 1 秒后重试
         
-    print("-----------------------------rrr--Get sim_status is : {}".format(sim_status_dict[sim_status]))
+    printf("-----------------------------rrr--Get sim_status is : {}".format(sim_status_dict[sim_status]))
     
     retry_count = 0
     while retry_flag == 1:
@@ -102,16 +95,16 @@ def rtcm_tcp_client():
         status_1, status_2 = net_status
         
         # 输出状态
-        print("{0}<<<".format(net_status))
+        printf("{0}<<<".format(net_status))
         
         # 检查条件（根据需要自定义条件）
         if status_1[0] == 1 and status_2[-2] == 65535:
-            print("网络处于预期状态。退出...")
+            printf("网络处于预期状态。退出...")
             break  # 条件满足，退出循环
         
         retry_count += 1
         if retry_count > 15:  # 超过15次直接退出
-            print("网络状态检查超过 15 次，跳过数据状态检查，退出...")
+            printf("网络状态检查超过 15 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         # 如果不满足条件，等待一段时间后继续
@@ -131,19 +124,19 @@ def rtcm_tcp_client():
                 
                 # 打印或处理逻辑
                 if is_first_value_one and is_third_value_not_zero:
-                    print("条件满足，处理逻辑...")
+                    printf("条件满足，处理逻辑...")
                     break
                 else:
-                    print("条件未满足，继续检查...")
+                    printf("条件未满足，继续检查...")
             else:
-                print("data_status[2] 不是有效列表或长度不足。")
+                printf("data_status[2] 不是有效列表或长度不足。")
         else:
-            print("data_status 不是有效元组或长度不足。")
+            printf("data_status 不是有效元组或长度不足。")
             
-        print("{0}<<<".format(data_status))
+        printf("{0}<<<".format(data_status))
         retry_count += 1
         if retry_count > 15:  # 超过15次直接退出
-            print("ip状态检查超过 15 次，跳过数据状态检查，退出...")
+            printf("ip状态检查超过 15 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         time.sleep(1)  # 等待 1 秒
@@ -157,7 +150,7 @@ def rtcm_tcp_client():
         rtcm_sock = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
         printf("套接字创建成功")
     except Exception as e:
-        printf("创建套接字时出错:", e)
+        printf("创建套接字时出错:{}".format(e))
     
     # 设置套接字超时为3秒
     rtcm_sock.settimeout(3)
@@ -196,14 +189,13 @@ def rtcm_tcp_client():
             mount = data["mount"]
             accpas = data["accpas"]
     except (ValueError, KeyError) as e:
-        print("解析JSON时发生错误:", e)
+        printf("解析JSON时发生错误:{}".format(e))
     
     try:
         # 尝试连接服务器
         rtcm_sock.connect((ip, int(port)))
     except OSError as e:
         printf("连接失败: " + str(e))
-        syslog.RecordNetworkError("网络连接失败: " + str(e))
         is_connected = 0
         thread_id = _thread.start_new_thread(RTCM_TCP_thread_temp, ())
         return
@@ -267,16 +259,13 @@ def rtcm_tcp_read():
                 printf(utf8_data)
             elif "ERROR - Bad Password\r\n" in utf8_data:
                 is_connected = 3  # 密码错误
-                syslog.RecordNetworkError("账号密码错误")
                 printf("账号密码错误\r\n")
             else:
                 um982.uart_um982.write(data)  # 将数据发送到硬件
     except OSError as e:
         printf("接收数据超时或断开TCP连接: " + str(e))
-        syslog.RecordNetworkError("接收数据超时或断开TCP连接: " + str(e))
         return  # 跳出函数
     except Exception as e:
         printf("断开TCP连接: " + str(e))
-        syslog.RecordNetworkError("断开TCP连接: " + str(e))
         rtcm_sock.close()  # 关闭套接字
         is_connected = 0  # 设置连接状态为未连接

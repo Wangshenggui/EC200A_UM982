@@ -6,6 +6,9 @@ sys.path.append('/usr')
 import bleat
 import um982
 
+# 调试
+DEBUG = True
+
 # 定义全局标志位
 is_connected = False  # 初始状态为未连接
 
@@ -21,7 +24,8 @@ ble_read_semphore = _thread.allocate_semphore(1)
 
 def printf(s):
     """ 打印蓝牙信息的函数 """
-    print("[ble]: " + s)
+    if DEBUG:
+        print("[ble]: " + s)
 
 def init_ble():
     """ 初始化蓝牙模块和串口，并开启蓝牙接收线程 """
@@ -83,13 +87,13 @@ def BLE_thread(para):
                     
         except AttributeError as e:
             # 处理异常：如果 message 是 None 或者 message.strip() 出现问题
-            print("AttributeError in process_nmea_message: " + str(e))
+            printf("AttributeError in process_nmea_message: " + str(e))
         except RuntimeError as e:
             # 处理异常：如果信号量释放时出现问题
-            print("RuntimeError in process_nmea_message: " + str(e))
+            printf("RuntimeError in process_nmea_message: " + str(e))
         except Exception as e:
             # 捕获所有其他异常
-            print("Unexpected error in process_nmea_message: " + str(e))
+            printf("Unexpected error in process_nmea_message: " + str(e))
 
 # 串口接收中断回调函数
 def uart_call(para):
@@ -110,7 +114,7 @@ def uart_call(para):
                     um982.uart_um982.write(received)
                 
             except RuntimeError as e:
-                print("释放信号量失败: ", e)
+                printf("释放信号量失败: " + str(e))
 
 # 发送蓝牙字符串，若蓝牙已连接才发送
 def ble_send_string(s):

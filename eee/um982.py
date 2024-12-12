@@ -6,6 +6,9 @@ sys.path.append('/usr')
 import ble
 import usruart
 
+# 调试
+DEBUG = True
+
 
 # 串口对象和全局变量定义
 uart_um982 = None  # 串口实例
@@ -108,7 +111,8 @@ um982_read_semphore = _thread.allocate_semphore(1)
 
 
 def printf(s):
-    print("[um982]: " + s)
+    if DEBUG:
+        print("[um982]: " + s)
 
 # 初始化UM982串口和相关设置
 def init_um982():

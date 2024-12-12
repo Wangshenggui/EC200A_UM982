@@ -1,6 +1,7 @@
 import utime  # type: ignore # 导入utime模块，用于延时
 import _thread  # 导入_thread模块，用于多线程
 import sys  # 导入sys模块，用于系统级操作
+import net # type: ignore
 # 添加 /usr 目录到模块搜索路径
 sys.path.append('/usr')  
 import um982  # 导入um982模块，用于与硬件进行交互
@@ -11,7 +12,8 @@ import usruart  # 导入用户串口模块
 import gpio  # 导入GPIO模块，用于控制GPIO引脚
 import syslog   # type: ignore # 导入系统日志模块
 
-
+# 调试
+DEBUG = True
 
 # utime.sleep_ms(3000)  # 延时5秒，确保系统初始化
 # 初始化RTC通信套接字
@@ -48,15 +50,14 @@ ModuleLED_Pin.set()
 
 # 用于打印带有标签的调试信息
 def printf(s):
-    print("[main_template]: " + s)
+    if DEBUG:
+        print("[main_template]: " + s)
 
 
 # 主线程函数
 def main_thread():
     # voiceCall.callStart('13985821802')    # 打电话
     while True:
-        utime.sleep_ms(500)  # 每500毫秒循环一次
-
         # 根据RTC通信套接字的连接状态设置不同的响应
         if rtcmsocket.is_connected == 0:    # 连接CORS失败/未连接
             rtcm_s = "连接CORS失败/未连接\r\n"
@@ -71,17 +72,11 @@ def main_thread():
             rtcm_s = "握手失败（账号或密码错误/过期）\r\n"
             syslog.SysLampSignalState = 3   # 握手失败（账号或密码错误/过期）
         
-        # 将连接状态发送给蓝牙
-        # ble.ble_send_string(rtcm_s)   # 引起串口冲突
-        # printf(rtcm_s)
-        
-        utime.sleep_ms(500)  # 延时500毫秒
+        utime.sleep_ms(1000)  # 延时500毫秒
 
-        # 打印版本信息
-        # printf("我是版本1.0.0")
-        import net
-        print(">>>{0}".format(net.csqQueryPoll()))
-        print("{0}<<<".format(net.getState()))
+        printf(">>>{0},{1}<<<".format(net.csqQueryPoll(),net.getState()))
+        
+        
         
 
 

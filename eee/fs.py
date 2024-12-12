@@ -1,11 +1,15 @@
 # config.ini
 
+# 调试
+DEBUG = True
+
 # 配置数据示例
 um982_configdata = "[um982]\nhello world!\niganma"
 
 # 打印文件系统操作的信息
 def printf(s):
-    print("[fs]: " + s)
+    if DEBUG:
+        print("[fs]: " + s)
 
 # 创建文件函数
 def CreateFile(FileName):

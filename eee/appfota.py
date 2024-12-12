@@ -4,13 +4,17 @@ from misc import Power # type: ignore
 from ftplib import FTP
 import fs
 
+# 调试
+DEBUG = True
+
 # 代码更新标志
 update_code_flag = False
 
 
 def printf(s):
     """ 打印带有标签的信息 """
-    print("[appfota]: " + s)
+    if DEBUG:
+        print("[appfota]: " + s)
 
 def read_file_from_ftp(ftp_url, directory, filename):
     """ 从 FTP 服务器读取指定文件内容
@@ -53,11 +57,11 @@ def read_file_from_ftp(ftp_url, directory, filename):
 
     except OSError:
         # 如果无法连接到 FTP 服务器，打印错误信息并返回空字符串
-        print("无法连接，跳过文件读取。")
+        printf("无法连接，跳过文件读取。")
         return ""  # 返回空字符串，表示未能成功读取文件
     except Exception as e:
         # 捕获其他异常并打印错误信息，确保程序不崩溃
-        print("无法读取文件: {}".format(e))
+        printf("无法读取文件: {}".format(e))
         return ""  # 返回空字符串，表示读取文件失败
     finally:
         try:
@@ -180,12 +184,12 @@ def fetch_file_list(ftp_url, directory, username, password):
         filtered_files = [f for f in files if f.endswith('.txt') or f.endswith('.py') or f.endswith('.mpy')]
         
         # 打印获取到的文件名列表
-        print("获取到的文件名: {}".format(", ".join(filtered_files)))
+        printf("获取到的文件名: {}".format(", ".join(filtered_files)))
         
         return filtered_files  # 返回过滤后的文件名列表
     except Exception as e:
         # 捕获所有异常并打印错误信息
-        print("无法获取文件列表: {}".format(e))
+        printf("无法获取文件列表: {}".format(e))
         return []  # 返回空列表表示获取文件列表失败
     finally:
         if ftp:

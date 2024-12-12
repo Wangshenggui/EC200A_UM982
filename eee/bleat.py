@@ -14,6 +14,8 @@ import rtcmsocket
 import appfota
 import usruart
 
+# 调试
+DEBUG = True
 
 # 创建信号量用于控制线程同步
 at_semaphore = _thread.allocate_semphore(1)
@@ -24,7 +26,8 @@ stop = True
 
 # 打印信息函数
 def printf(s):
-    print("[ble_at]: " + s)
+    if DEBUG:
+        print("[ble_at]: " + s)
 
 
 # 初始化AT线程
@@ -56,19 +59,20 @@ def event_callback(event_args):
     event_type, call_id, reason_code, state_code, reserved1, reserved2, phone_number, number_type, extra_info = event_args
 
     # 打印回调信息
-    print("收到回调事件: {0}".format(event_args))
+    printf("收到回调事件: {0}".format(event_args))
     
     # 根据事件类型处理逻辑
     if event_type == 14:  # 呼出中
-        print("正在拨打电话：{0}...".format(phone_number))
+        printf("正在拨打电话：{0}...".format(phone_number))
     elif event_type == 11:  # 电话已接通
-        print("电话已接通：{0}。".format(phone_number))
+        printf("电话已接通：{0}。".format(phone_number))
     elif event_type == 12:  # 电话已挂断
-        print("电话已挂断：{0}。".format(phone_number))
+        printf("电话已挂断：{0}。".format(phone_number))
         rtcmsocket.rtcm_sock.close()
+        _thread.stop_thread(rtcmsocket.thread_id)
         rtcmsocket.rtcm_tcp_client()
     else:
-        print("未知事件类型：{0}".format(event_type))
+        printf("未知事件类型：{0}".format(event_type))
 
 # 注册回调函数（假设模块需要手动注册回调）
 voiceCall.setCallback(event_callback)
@@ -102,9 +106,9 @@ def AT_thread():
                     voiceCall.callEnd()
                     result = voiceCall.callStart(instruct)    # 打电话
                     if result == 0:
-                        print("电话拨打成功，正在呼出...")
+                        printf("电话拨打成功，正在呼出...")
                     else:
-                        print("电话拨打失败，错误码：{0}".format(result))
+                        printf("电话拨打失败，错误码：{0}".format(result))
             elif "AT+Name=" in ble.at_message:
                 # 处理设置蓝牙名称的命令
                 start_index = ble.at_message.index('=') + 1
@@ -140,7 +144,7 @@ def AT_thread():
                         Power.powerRestart()
                 except (ValueError, KeyError) as e:
                     # 捕获JSON解析错误
-                    printf("解析JSON时发生错误:", e)
+                    printf("解析JSON时发生错误:{0}".format(e))
             elif "AT+UM982=" in ble.at_message:
                 # 处理UM982命令
                 with lock:
@@ -195,9 +199,9 @@ def AT_thread():
                     voiceCall.callEnd()
                     result = voiceCall.callStart(instruct)    # 打电话
                     if result == 0:
-                        print("电话拨打成功，正在呼出...")
+                        printf("电话拨打成功，正在呼出...")
                     else:
-                        print("电话拨打失败，错误码：{0}".format(result))
+                        printf("电话拨打失败，错误码：{0}".format(result))
             elif "AT+Name=" in usruart.usr_at_message:
                 # 处理设置串口名称的命令
                 start_index = usruart.usr_at_message.index('=') + 1
@@ -230,7 +234,7 @@ def AT_thread():
                         Power.powerRestart()
                 except (ValueError, KeyError) as e:
                     # 捕获JSON解析错误
-                    printf("解析JSON时发生错误:", e)
+                    printf("解析JSON时发生错误:{}".format(e))
             elif "AT+UM982=" in usruart.usr_at_message:
                 # 处理UM982命令
                 with lock:

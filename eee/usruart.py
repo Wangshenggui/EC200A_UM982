@@ -7,6 +7,9 @@ sys.path.append('/usr')
 import bleat
 import ble
 
+# 调试
+DEBUG = True
+
 # 创建信号量，用于线程同步
 usr_read_semphore = _thread.allocate_semphore(1)
 
@@ -18,7 +21,8 @@ usr_at_message = ""  # 存储 AT 指令
 
 # 打印调试信息的函数
 def printf(s):
-    print("[usruart]: " + s)
+    if DEBUG:
+        print("[usruart]: " + s)
 
 # 初始化用户串口函数
 def init_usruart():
@@ -71,13 +75,13 @@ def USR_thread(para):
                     
         except AttributeError as e:
             # 处理 AttributeError 异常（例如数据为空或格式不对）
-            print("AttributeError in process_nmea_message: " + str(e))
+            printf("AttributeError in process_nmea_message: " + str(e))
         except RuntimeError as e:
             # 处理 RuntimeError 异常（例如信号量释放失败）
-            print("RuntimeError in process_nmea_message: " + str(e))
+            printf("RuntimeError in process_nmea_message: " + str(e))
         except Exception as e:
             # 捕获其他未预见的异常
-            print("Unexpected error in process_nmea_message: " + str(e))
+            printf("Unexpected error in process_nmea_message: " + str(e))
 
 # 串口接收中断回调函数，处理从串口接收到的数据
 def uart_call(para):
@@ -93,7 +97,7 @@ def uart_call(para):
                     usr_read_semphore.release()  # 释放信号量，唤醒处理线程
             except RuntimeError as e:
                 # 捕获异常并打印错误信息
-                print("释放信号量失败: ", e)
+                printf("释放信号量失败: {}".format(e))
 
 # 向用户串口发送字符串数据
 def usr_send_string(s):
