@@ -13,7 +13,7 @@ import gpio  # 导入GPIO模块，用于控制GPIO引脚
 import syslog   # type: ignore # 导入系统日志模块
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # utime.sleep_ms(3000)  # 延时5秒，确保系统初始化
 # 初始化RTC通信套接字

@@ -7,7 +7,7 @@ import ble
 import usruart
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 
 # 串口对象和全局变量定义

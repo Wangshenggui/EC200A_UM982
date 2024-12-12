@@ -1,7 +1,7 @@
 # config.ini
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 配置数据示例
 um982_configdata = "[um982]\nhello world!\niganma"

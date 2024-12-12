@@ -7,7 +7,7 @@ import bleat
 import um982
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 定义全局标志位
 is_connected = False  # 初始状态为未连接

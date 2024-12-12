@@ -14,7 +14,7 @@ import um982  # 引入um982模块，可能是与硬件或外设相关的操作
 import fs  # 文件系统操作模块
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 定义一些全局变量
 ip = None  # 存储服务器IP地址

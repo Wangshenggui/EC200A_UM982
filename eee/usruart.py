@@ -8,7 +8,7 @@ import bleat
 import ble
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 创建信号量，用于线程同步
 usr_read_semphore = _thread.allocate_semphore(1)

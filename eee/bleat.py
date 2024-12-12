@@ -15,7 +15,7 @@ import appfota
 import usruart
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 创建信号量用于控制线程同步
 at_semaphore = _thread.allocate_semphore(1)

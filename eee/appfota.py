@@ -5,7 +5,7 @@ from ftplib import FTP
 import fs
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 代码更新标志
 update_code_flag = False
