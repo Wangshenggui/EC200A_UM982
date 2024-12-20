@@ -97,6 +97,10 @@ def UM982_thread(para):
                 # 提取时间字段（位于第2个字段，格式为 HHMMSS.SSS）
                 gga_fields = line.split(',')
                 time_str = gga_fields[1]  # 获取时间字符串 (HHMMSS.SSS)
+                if not time_str:
+                    printf("无信号，退出循环")
+                    break
+                    
                 if '.' in time_str:
                     integer_part, fractional_part = time_str.split('.')
                 

@@ -15,7 +15,7 @@ import appfota
 import usruart
 
 # 调试
-DEBUG = True
+DEBUG = False
 
 # 创建信号量用于控制线程同步
 at_semaphore = _thread.allocate_semphore(1)
@@ -107,8 +107,10 @@ def AT_thread():
                     result = voiceCall.callStart(instruct)    # 打电话
                     if result == 0:
                         printf("电话拨打成功，正在呼出...")
+                        ble.ble_send_string("电话拨打成功，正在呼出...")
                     else:
                         printf("电话拨打失败，错误码：{0}".format(result))
+                        ble.ble_send_string("电话拨打失败，错误码：{0}".format(result))
             elif "AT+Name=" in ble.at_message:
                 # 处理设置蓝牙名称的命令
                 start_index = ble.at_message.index('=') + 1
