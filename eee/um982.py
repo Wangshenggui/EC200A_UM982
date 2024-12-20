@@ -98,6 +98,8 @@ def UM982_thread(para):
                 gga_fields = line.split(',')
                 time_str = gga_fields[1]  # 获取时间字符串 (HHMMSS.SSS)
                 if not time_str:
+                    ble.uart_ble.write(line + "::")
+                    ble.uart_ble.write("\r\n")  # 添加换行符
                     printf("无信号，退出循环")
                     break
                     
