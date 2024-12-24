@@ -27,16 +27,16 @@ class gpio_out:
             
     
     def style_1(self):
-        """LED 快闪，每 0.2 秒闪烁一次"""
-        self.toggle()
+        """关闭"""
+        self.reset()
         utime.sleep_ms(200)
         
     def style_2(self):
-        """常亮1s,灭200ms"""
+        """闪烁"""
         self.set()
-        utime.sleep_ms(1800)
+        utime.sleep_ms(800)
         self.reset()
-        utime.sleep_ms(200)
+        utime.sleep_ms(800)
 
 
             

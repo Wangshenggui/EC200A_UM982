@@ -78,8 +78,8 @@ def rtcm_tcp_client():
             break  # SIM 状态为 1，退出循环
         
         retry_count += 1
-        if retry_count > 15:  # 超过15次直接退出
-            printf("SIM状态检查超过 15 次，跳过数据状态检查，退出...")
+        if retry_count > 10:  # 超过10次直接退出
+            printf("SIM状态检查超过 10 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         time.sleep(1)  # 等待 1 秒后重试
@@ -103,8 +103,8 @@ def rtcm_tcp_client():
             break  # 条件满足，退出循环
         
         retry_count += 1
-        if retry_count > 15:  # 超过15次直接退出
-            printf("网络状态检查超过 15 次，跳过数据状态检查，退出...")
+        if retry_count > 10:  # 超过10次直接退出
+            printf("网络状态检查超过 10 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         # 如果不满足条件，等待一段时间后继续
@@ -135,8 +135,8 @@ def rtcm_tcp_client():
             
         printf("{0}<<<".format(data_status))
         retry_count += 1
-        if retry_count > 15:  # 超过15次直接退出
-            printf("ip状态检查超过 15 次，跳过数据状态检查，退出...")
+        if retry_count > 10:  # 超过10次直接退出
+            printf("ip状态检查超过 10 次，跳过数据状态检查，退出...")
             retry_flag = 0
             break
         time.sleep(1)  # 等待 1 秒
